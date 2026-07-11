@@ -426,7 +426,7 @@
 const rolesData=[
   {id:"student",label:"นักศึกษา",icon:"🎓",desc:"สมัครและติดตามงานฝึกงาน"},
   {id:"enterprise",label:"สถานประกอบการ",icon:"🏢",desc:"ลงประกาศรับนักศึกษาฝึกงาน"},
-  {id:"institution",label:"สถาบันการศึกษา",icon:"🏫",desc:"ตรวจสอบและ Verify ทักษะ"},
+  {id:"institution",label:"สถาบันการศึกษา",icon:"🏫",desc:"ตรวจสอบข้อมูลองค์กรและสถาบันการศึกษา"},
   {id:"admin",label:"ผู้ดูแลระบบ",icon:"🛡️",desc:"บริหารจัดการระบบ"}
 ];
 
@@ -983,7 +983,7 @@ function saveEnterpriseProfile(){
 }
 
 /* ========== Layout helpers ========== */
-function appHeader(title,sub,badge){return `<div class="app-header"><div><h2>${title}</h2><p>${sub}</p></div><span class="badge">${badge}</span></div>`;}
+function appHeader(title,sub){return `<div class="app-header"><div><h2>${title}</h2><p>${sub}</p></div></div>`;}
 function layout(role,content){
   const active=state.screen[role];
   return `${appHeader(rLabel(role),""+role.toUpperCase())}
@@ -1021,7 +1021,7 @@ function studentView(){
       ${bannerHtml}
       <div class="match-header">
         <h3>💼 งานที่แนะนำสำหรับคุณ</h3>
-        <p>จัดลำดับตามความเข้ากันกับทักษะของคุณ — คลิก Avatar ด้านบนเพื่อดูโปรไฟล์</p>
+        <p>จัดลำดับตามความเข้ากันกับทักษะของคุณ</p>
       </div>
       <div class="grid" style="gap:14px">
         ${ranked.map((job,i)=>`
@@ -1269,7 +1269,7 @@ function renderPostJobForm(){
     </div>
     <div class="grid two">
       <div><label>ชื่อตำแหน่ง</label><input value="Frontend Developer Intern"></div>
-      <div><label>จำนวนรับ</label><input value="3"></div>
+      <div><label>จำนวนที่รับ</label><input value="3"></div>
     </div>
     <label>แผนก/ฝ่าย</label><input value="Software Engineering">
     <label>ทักษะที่ต้องการ</label>
@@ -1490,7 +1490,7 @@ function openAdminDetail(type,id){
   } else {
     title=`รายละเอียดโพสต์ที่ถูกรายงาน`;
     fields=[["สถานประกอบการ",item.company],["ตำแหน่ง",item.position],["สถานที่ทำงาน",item.location],["เบี้ยเลี้ยง/ค่าตอบแทน",item.allowance],["เวลาทำงาน",item.workHours],["จำนวนรายงาน",`<button class="secondary" onclick="openPostReports('${id}')">${item.reports.length} รายงาน · ดูรายงาน</button>`],["วันที่รายงาน",item.submitted],["สถานะ",item.status==="removed"?"ลบโพสต์แล้ว":item.status==="kept"?"ไม่ลบโพสต์":"รอตรวจสอบ"]];
-    extra=`<div class="job-detail-header"><h2 style="margin:0 0 5px">${item.title}</h2><p style="margin:0;color:#dbeafe">${item.company} · ${item.position}</p></div><div class="job-detail-section"><h4>รายละเอียดประกาศ</h4><p>${item.content}</p></div><div class="job-detail-section"><h4>หน้าที่ความรับผิดชอบ</h4><ul>${item.responsibilities.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="job-detail-section"><h4>คุณสมบัติผู้สมัคร</h4><ul>${item.requirements.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="job-detail-section"><h4>สวัสดิการและสิทธิประโยชน์</h4><ul>${item.benefits.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="contact-box"><strong>ช่องทางติดต่อ:</strong> ${item.contact}</div><div class="job-detail-section" style="margin-top:16px"><h4>เหตุผลสรุปที่ได้รับรายงาน</h4><p>${item.reportedReason}</p><button class="secondary" onclick="openPostReports('${id}')">ดูรายงานจากนักศึกษาทั้งหมด (${item.reports.length})</button></div>`;
+    extra=`<div class="job-detail-header"><h2 style="margin:0 0 5px;color:#ffff">${item.title}</h2><p style="margin:0;color:#ffff">${item.company} · ${item.position}</p></div><div class="job-detail-section"><h4>รายละเอียดประกาศ</h4><p>${item.content}</p></div><div class="job-detail-section"><h4>หน้าที่ความรับผิดชอบ</h4><ul>${item.responsibilities.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="job-detail-section"><h4>คุณสมบัติผู้สมัคร</h4><ul>${item.requirements.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="job-detail-section"><h4>สวัสดิการและสิทธิประโยชน์</h4><ul>${item.benefits.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="contact-box"><strong>ช่องทางติดต่อ:</strong> ${item.contact}</div><div class="job-detail-section" style="margin-top:16px"><h4>เหตุผลสรุปที่ได้รับรายงาน</h4><p>${item.reportedReason}</p><button class="secondary" onclick="openPostReports('${id}')">ดูรายงานจากนักศึกษาทั้งหมด (${item.reports.length})</button></div>`;
     actions=item.status==="reported"?`<button class="danger" onclick="moderatePost('${id}','removed')">ลบโพสต์</button><button class="secondary" onclick="moderatePost('${id}','kept')">ไม่ลบโพสต์</button>`:"";
   }
   document.getElementById("adminDetailContent").innerHTML=`<h2>${title}</h2><p class="modal-sub">ตรวจสอบข้อมูลก่อนดำเนินการ</p><div class="profile-fields-grid">${fields.map(([l,v])=>`<div class="profile-field-box"><p class="profile-field-label">${l}</p><p class="profile-field-value">${v}</p></div>`).join("")}</div>${extra}<div class="actions">${actions}<button class="ghost" onclick="closeModal('adminDetailModal')">ปิด</button></div>`;
@@ -1503,10 +1503,10 @@ function moderatePost(id,status){const post=adminReportedPosts.find(x=>x.id===id
 function approvalRow(type,item,title,description){return `<article class="enterprise-row"><div><h3>${title}</h3><p class="small">${description}</p><span class="badge">${approvalStatus(item.status)}</span>${item.rejectionReason?`<p class="small" style="margin:7px 0 0;color:#b91c1c">เหตุผล: ${item.rejectionReason}</p>`:""}</div><div class="admin-actions"><button class="secondary" onclick="openAdminDetail('${type}','${item.id}')">ดูรายละเอียด</button>${item.status==="pending"?`<button class="success" onclick="approveAdminRequest('${type}','${item.id}')">อนุมัติ</button><button class="danger" onclick="openAdminReject('${type}','${item.id}')">ไม่อนุมัติ</button>`:""}</div></article>`;}
 function adminView(){
   const sc=state.screen.admin;
-  if(sc==="dashboard")return layout("admin",`<div class="grid three"><div class="metric"><strong>1,248</strong><span>ผู้ใช้งานทั้งหมด</span></div><div class="metric"><strong>312</strong><span>ประกาศงาน</span></div><div class="metric"><strong>76</strong><span>คำขอรออนุมัติ</span></div></div><div class="grid two" style="margin-top:14px"><div class="card"><h3>สถิติการสมัครงาน</h3><div class="bar"><span style="width:78%"></span></div><p class="small">Applications 78%</p></div><div class="card"><h3>สถิติการ Verify Skill</h3><div class="bar"><span style="width:64%"></span></div><p class="small">Verified skill requests 64%</p></div></div>`);
+  if(sc==="dashboard")return layout("admin",`<div class="grid three"><div class="metric"><strong>1,248</strong><span>ผู้ใช้งานทั้งหมด</span></div><div class="metric"><strong>312</strong><span>ประกาศงาน</span></div><div class="metric"><strong>76</strong><span>คำขอรออนุมัติ</span></div></div><div class="grid two" style="margin-top:14px"><div class="card"><h3>สถิติการสมัครงาน</h3><div class="bar"><span style="width:78%"></span></div><p class="small">Applications 78%</p></div>`);
   if(sc==="profile")return layout("admin",adminProfilePage());
   if(sc==="enterprise")return layout("admin",`<div class="admin-section"><div class="admin-section-head"><div><h3>การรออนุมัติสำหรับองค์กร</h3><p class="small" style="margin:4px 0 0">ตรวจสอบรายชื่อบริษัทและเอกสารประกอบก่อนอนุมัติ</p></div><span class="badge">${adminEnterprises.filter(x=>x.status==="pending").length} รายการรออนุมัติ</span></div><div class="grid">${adminEnterprises.map(x=>approvalRow("enterprise",x,x.company,`เลขทะเบียน ${x.registration} · ยื่นเมื่อ ${x.submitted}`)).join("")}</div></div><div class="admin-section"><div class="admin-section-head"><div><h3>การรออนุมัติสำหรับอาจารย์</h3><p class="small" style="margin:4px 0 0">ตรวจสอบข้อมูลอาจารย์ มหาวิทยาลัย และหลักสูตร</p></div><span class="badge">${adminTeachers.filter(x=>x.status==="pending").length} รายการรออนุมัติ</span></div><div class="grid">${adminTeachers.map(x=>approvalRow("teacher",x,x.name,`${x.teacherId} · ${x.university} · ${x.program}`)).join("")}</div></div>`);
-  return layout("admin",`<div class="admin-section-head"><div><h3>โพสต์ประกาศที่ถูกรายงาน</h3><p class="small" style="margin:4px 0 0">เปิดดูเนื้อหาประกาศและเหตุผลการรายงานก่อนตัดสินใจ</p></div><span class="badge">${adminReportedPosts.filter(x=>x.status==="reported").length} รายการรอตรวจสอบ</span></div><div class="grid">${adminReportedPosts.map(p=>`<article class="post-row"><div><h3 style="color:white">${p.title}</h3><p class="small">${p.company} · ถูกรายงาน ${p.reports.length} ครั้ง</p><span class="badge">${p.status==="removed"?"ลบโพสต์แล้ว":p.status==="kept"?"ไม่ลบโพสต์":"Reported"}</span></div><div class="admin-actions"><button class="secondary" onclick="openAdminDetail('post','${p.id}')">ตรวจสอบโพสต์</button>${p.status==="reported"?`<button class="danger" onclick="moderatePost('${p.id}','removed')">ลบโพสต์</button><button class="success" onclick="moderatePost('${p.id}','kept')">ไม่ลบโพสต์</button>`:""}</div></article>`).join("")}</div>`);
+  return layout("admin",`<div class="admin-section-head"><div><h3>โพสต์ประกาศที่ถูกรายงาน</h3><p class="small" style="margin:4px 0 0">เปิดดูเนื้อหาประกาศและเหตุผลการรายงานก่อนตัดสินใจ</p></div><span class="badge">${adminReportedPosts.filter(x=>x.status==="reported").length} รายการรอตรวจสอบ</span></div><div class="grid">${adminReportedPosts.map(p=>`<article class="post-row"><div><h3 style="color:black">${p.title}</h3><p class="small">${p.company} · ถูกรายงาน ${p.reports.length} ครั้ง</p><span class="badge">${p.status==="removed"?"ลบโพสต์แล้ว":p.status==="kept"?"ไม่ลบโพสต์":"Reported"}</span></div><div class="admin-actions"><button class="secondary" onclick="openAdminDetail('post','${p.id}')">ตรวจสอบโพสต์</button>${p.status==="reported"?`<button class="danger" onclick="moderatePost('${p.id}','removed')">ลบโพสต์</button><button class="success" onclick="moderatePost('${p.id}','kept')">ไม่ลบโพสต์</button>`:""}</div></article>`).join("")}</div>`);
 }
 
 /* ========== Render ========== */
