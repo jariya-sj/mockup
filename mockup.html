@@ -1,0 +1,1526 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DEK INTERN</title>
+  <style>
+    :root {
+      --navy: #1e3a8a; --blue: #2563eb; --sky: #dbeafe; --ink: #111827;
+      --muted: #6b7280; --line: #d7deea; --bg: #f3f6fb; --white: #ffffff;
+      --green: #16a34a; --red: #dc2626; --amber: #d97706;
+      --shadow: 0 18px 45px rgba(30,58,138,.16);
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"Segoe UI",Tahoma,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+    button,input,select,textarea { font:inherit; }
+    button { border:0; cursor:pointer; transition:transform .15s,box-shadow .15s,background .15s; }
+    button:active { transform:translateY(1px); }
+    .shell { min-height:100vh; display:grid; grid-template-rows:auto 1fr; }
+    .topbar { background:var(--white); border-bottom:1px solid var(--line); padding:14px 22px;
+      display:flex; gap:16px; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .mark { width:42px; height:42px; border-radius:8px; background:var(--navy); color:white;
+      display:grid; place-items:center; font-weight:800; font-size:13px; }
+    .brand h1 { margin:0; font-size:20px; color:var(--navy); letter-spacing:-0.5px; }
+    .brand span { color:var(--muted); font-size:12px; }
+    .topbar-actions { display:flex; gap:10px; align-items:center; }
+    .btn-login { border-radius:7px; padding:9px 18px; background:var(--navy); color:white; border:0; font-weight:700; font-size:14px; }
+    .btn-login:hover { background:#1e40af; }
+    .btn-register { border-radius:7px; padding:9px 18px; background:var(--blue); color:white; border:0; font-weight:700; font-size:14px; }
+    .btn-register:hover { background:#1d4ed8; }
+    .btn-logout { border-radius:7px; padding:9px 14px; background:#fee2e2; color:#b91c1c; border:0; font-weight:700; font-size:13px; }
+    .user-info { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted); }
+    .user-avatar { width:34px; height:34px; border-radius:50%; background:var(--navy); color:white; display:grid; place-items:center; font-weight:800; font-size:13px; }
+    .user-avatar.clickable { cursor:pointer; transition:opacity .15s, box-shadow .2s; }
+    .user-avatar.clickable:hover { opacity:.85; box-shadow:0 0 0 3px #bfdbfe; }
+    /* Notification bell */
+    .notif-btn { position:relative; width:36px; height:36px; border-radius:50%; background:#f1f5f9; color:#334155; font-size:18px; display:grid; place-items:center; border:0; cursor:pointer; transition:background .15s; }
+    .notif-btn:hover { background:#e2e8f0; }
+    .notif-dot { position:absolute; top:4px; right:4px; width:9px; height:9px; border-radius:50%; background:#ef4444; border:2px solid white; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,.55); display:flex; align-items:center;
+      justify-content:center; z-index:100; padding:20px; backdrop-filter:blur(2px); }
+    .modal-overlay.hidden { display:none; }
+    .modal-box { background:white; border-radius:12px; padding:28px; width:min(480px,100%);
+      box-shadow:0 24px 60px rgba(30,58,138,.22); position:relative; max-height:90vh; overflow-y:auto; }
+    .modal-box.wide { width:min(740px,100%); }
+    .modal-box.ultra-wide { width:min(900px,100%); }
+    .modal-close { position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:50%;
+      background:#f1f5f9; color:#64748b; font-size:16px; display:grid; place-items:center; border:0; cursor:pointer; z-index:5; }
+    .modal-close:hover { background:#e2e8f0; }
+    .modal-box h2 { margin:0 0 6px; color:var(--navy); font-size:20px; }
+    .modal-sub { color:var(--muted); font-size:13px; margin:0 0 18px; }
+    .role-select-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:14px 0; }
+    .role-card { border:2px solid var(--line); border-radius:10px; padding:14px; cursor:pointer; background:#f8fafc; transition:all .15s; }
+    .role-card:hover,.role-card.selected { border-color:var(--blue); background:#eff6ff; }
+    .role-card .role-icon { font-size:22px; margin-bottom:6px; }
+    .role-card .role-name { font-weight:700; font-size:14px; color:var(--navy); }
+    .role-card .role-desc { font-size:12px; color:var(--muted); margin-top:2px; }
+    .viewport-wrap { padding:24px; display:grid; place-items:start center; }
+    .viewport { width:min(1180px,100%); min-height:720px; background:var(--white); border:1px solid var(--line);
+      border-radius:8px; box-shadow:var(--shadow); overflow:hidden; display:grid; grid-template-rows:auto 1fr; }
+    .app-header { background:var(--navy); color:white; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+    .app-header h2 { margin:0; font-size:21px; }
+    .app-header p { margin:4px 0 0; color:#dbeafe; font-size:13px; }
+    .badge { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:5px 9px;
+      font-size:12px; font-weight:800; background:var(--sky); color:var(--navy); white-space:nowrap; }
+    .badge.success-badge { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+    .app-body { display:grid; grid-template-columns:230px 1fr; min-height:650px; }
+    .side { background:#f8fafc; border-right:1px solid var(--line); padding:18px 14px; }
+    .side button { width:100%; text-align:left; padding:11px 12px; margin-bottom:8px; border-radius:7px; background:transparent; color:#334155; font-weight:700; }
+    .side button.active { background:var(--sky); color:var(--navy); }
+    .content { padding:22px; background:#fff; overflow-y:auto; }
+    .grid { display:grid; gap:14px; }
+    .grid.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .card { border:1px solid var(--line); border-radius:8px; background:white; padding:16px; }
+    .card h3 { margin:0 0 10px; color:var(--navy); font-size:18px; }
+    .card p,.small { color:var(--muted); font-size:13px; line-height:1.55; }
+    .primary,.secondary,.danger,.success,.ghost { border-radius:7px; padding:10px 13px; font-weight:800; }
+    .primary { background:var(--blue); color:white; }
+    .secondary { background:var(--sky); color:var(--navy); }
+    .success { background:var(--green); color:white; }
+    .danger { background:var(--red); color:white; }
+    .ghost { background:white; color:var(--navy); border:1px solid var(--line); }
+    .jobs { padding:20px; display:grid; gap:14px; }
+    .job-row,.student-row,.verify-row,.enterprise-row,.post-row {
+      display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center;
+      padding:14px; border:1px solid var(--line); border-radius:8px; background:white; }
+    .admin-section { margin-bottom:24px; }
+    .admin-section-head { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin-bottom:10px; }
+    .admin-section-head h3 { margin:0; color:var(--navy); }
+    .admin-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .job-row h3,.student-row h3,.verify-row h3,.enterprise-row h3 { margin:0 0 5px; font-size:16px; color:var(--navy); }
+    .tagbar { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+    .tag { border-radius:999px; padding:5px 8px; font-size:12px; font-weight:800; background:#eef2ff; color:#3730a3; }
+    label { display:block; color:#334155; font-size:13px; font-weight:800; margin:14px 0 6px; }
+    input,select,textarea { width:100%; border:1px solid #cbd5e1; border-radius:7px; padding:10px; color:var(--ink); background:white; }
+    textarea { min-height:86px; resize:vertical; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .metric { border-left:4px solid var(--blue); background:#f8fafc; padding:14px; border-radius:8px; }
+    .metric strong { display:block; font-size:26px; color:var(--navy); }
+    .dashboard-metric { width:100%; text-align:left; }
+    .dashboard-metric:hover { box-shadow:0 4px 14px rgba(30,58,138,.12); transform:translateY(-1px); }
+    .bar { height:10px; border-radius:999px; background:#e5e7eb; overflow:hidden; margin-top:8px; }
+    .bar span { display:block; height:100%; background:var(--blue); border-radius:inherit; }
+    .toast { position:fixed; right:20px; bottom:20px; background:var(--navy); color:white;
+      padding:12px 14px; border-radius:8px; box-shadow:var(--shadow); opacity:0;
+      transform:translateY(12px); pointer-events:none; transition:.2s; z-index:200; max-width:320px; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .job-detail-header { background:linear-gradient(135deg,#1e3a8a,#2563eb); color:white;
+      padding:20px; border-radius:8px; margin-bottom:18px; }
+    .job-detail-section { margin-bottom:16px; }
+    .job-detail-section h4 { color:var(--navy); font-size:14px; margin:0 0 8px; }
+    .job-detail-section ul { margin:6px 0; padding-left:18px; }
+    .job-detail-section li { font-size:13px; color:var(--ink); margin-bottom:4px; line-height:1.5; }
+    .job-detail-section p { font-size:13px; color:var(--ink); margin:4px 0; line-height:1.6; }
+    .salary-badge { display:inline-block; background:#dcfce7; color:#15803d; border-radius:6px; padding:6px 12px; font-weight:800; font-size:15px; }
+    .benefit-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; }
+    .benefit-item { display:flex; align-items:flex-start; gap:6px; font-size:12px; color:var(--ink); }
+    .contact-box { background:#f8fafc; border:1px solid var(--line); border-radius:8px; padding:14px; }
+    .contact-box p { margin:4px 0; font-size:13px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .file-upload-area { border:2px dashed #cbd5e1; border-radius:8px; padding:24px; text-align:center;
+      cursor:pointer; transition:all .15s; background:#f8fafc; margin-top:6px; }
+    .file-upload-area:hover { border-color:var(--blue); background:#eff6ff; }
+    .file-upload-area .upload-icon { font-size:28px; margin-bottom:8px; }
+    .file-upload-area p { margin:0; font-size:13px; color:var(--muted); }
+    .register-type-row { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    .register-type-btn { border:2px solid var(--line); border-radius:7px; padding:8px 14px;
+      font-weight:700; font-size:13px; background:#f8fafc; color:var(--navy); cursor:pointer; transition:all .15s; }
+    .register-type-btn.selected { border-color:var(--blue); background:var(--sky); }
+
+    /* ===== Profile Modal ===== */
+    .profile-modal-box { background:white; border-radius:16px; width:min(580px,100%);
+      box-shadow:0 24px 60px rgba(30,58,138,.22); position:relative; overflow-y:auto; overflow-x:hidden; padding:0; max-height:90vh; }
+    .cover-photo-wrap { height:150px; background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#38bdf8 100%);
+      position:relative; border-radius:16px 16px 0 0; overflow:hidden; }
+    .cover-photo-outer { position:relative; }
+    .cover-photo-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.3); opacity:0; transition:.2s; cursor:pointer; }
+    .cover-photo-wrap.editable:hover .cover-photo-overlay { opacity:1; }
+    .cover-photo-overlay span { color:white; font-size:13px; font-weight:700; background:rgba(0,0,0,.4); padding:6px 14px; border-radius:999px; }
+    .profile-avatar-wrap { position:absolute; bottom:-38px; left:24px; z-index:3; pointer-events:none; }
+    .profile-avatar-large { width:76px; height:76px; border-radius:50%; background:var(--navy); color:white;
+      display:grid; place-items:center; font-size:28px; font-weight:800; border:4px solid white;
+      box-shadow:0 4px 16px rgba(30,58,138,.25); }
+    .profile-body { padding:52px 24px 24px; }
+    .profile-name-row { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+    .profile-name { font-size:21px; font-weight:800; color:var(--navy); margin:0 0 2px; }
+    .profile-sub-text { font-size:13px; color:var(--muted); margin:0; }
+    .profile-fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+    .profile-field-box { background:#f8fafc; border-radius:8px; padding:12px 14px; border:1px solid var(--line); }
+    .profile-field-label { font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin:0 0 3px; }
+    .profile-field-value { font-size:14px; color:var(--ink); font-weight:600; margin:0; }
+    .profile-edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+    .profile-edit-grid label { margin:0 0 4px; font-size:12px; font-weight:700; color:#334155; }
+    .profile-edit-grid input { padding:8px 10px; font-size:13px; }
+    .profile-edit-full { margin-bottom:10px; }
+    .profile-edit-full label { margin:0 0 4px; font-size:12px; font-weight:700; color:#334155; }
+    .profile-edit-full input { padding:8px 10px; font-size:13px; }
+    .skills-section-title { font-size:13px; font-weight:800; color:var(--navy); margin:0 0 10px; }
+    .skill-badges-wrap { display:flex; flex-wrap:wrap; gap:8px; }
+    .skill-badge { display:inline-flex; align-items:center; gap:5px; border-radius:999px;
+      padding:6px 13px; font-size:12px; font-weight:700; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+    .skill-badge.verified { background:#f0fdf4; color:#15803d; border-color:#bbf7d0; }
+    .skill-category { border:1px solid var(--line); border-radius:10px; padding:12px; margin:10px 0; background:#f8fafc; }
+    .skill-category h4 { margin:0 0 4px; color:var(--navy); font-size:14px; }
+    .skill-category p { margin:0 0 9px; color:var(--muted); font-size:12px; }
+    .skill-options { display:flex; flex-wrap:wrap; gap:7px; }
+    .skill-option { display:inline-flex; align-items:center; gap:5px; border:1px solid #bfdbfe; background:#eff6ff; color:#1d4ed8; border-radius:999px; padding:5px 9px; font-size:12px; font-weight:700; cursor:pointer; }
+    .skill-option input { width:auto; margin:0; accent-color:var(--blue); }
+
+    /* ===== Match Ranking ===== */
+    .match-header { margin:0 0 16px; }
+    .match-header h3 { margin:0 0 3px; color:var(--navy); font-size:17px; font-weight:800; }
+    .match-header p { margin:0; font-size:13px; color:var(--muted); }
+    .match-job-card { border:1px solid var(--line); border-radius:12px; background:white; padding:16px;
+      display:grid; grid-template-columns:50px 1fr auto; gap:14px; align-items:center;
+      transition:box-shadow .15s, border-color .15s; }
+    .match-job-card:hover { box-shadow:0 4px 18px rgba(30,58,138,.10); border-color:#bfdbfe; }
+    .rank-circle { width:46px; height:46px; border-radius:50%; display:grid; place-items:center;
+      font-weight:900; font-size:16px; flex-shrink:0; }
+    .rank-1 { background:linear-gradient(135deg,#fbbf24,#f59e0b); color:white; box-shadow:0 3px 10px rgba(245,158,11,.4); }
+    .rank-2 { background:linear-gradient(135deg,#94a3b8,#64748b); color:white; box-shadow:0 3px 10px rgba(100,116,139,.35); }
+    .rank-3 { background:linear-gradient(135deg,#cd7c3a,#b45309); color:white; box-shadow:0 3px 10px rgba(180,83,9,.35); }
+    .rank-other { background:#f1f5f9; color:#64748b; border:2px solid #e2e8f0; }
+    .match-score-badge { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:800;
+      color:#15803d; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:999px; padding:3px 9px; margin-top:6px; }
+    .match-tags-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+    .match-tag-yes { border-radius:999px; padding:4px 9px; font-size:11px; font-weight:700; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+    .match-tag-no { border-radius:999px; padding:4px 9px; font-size:11px; color:#9ca3af; background:#f9fafb; border:1px solid #e5e7eb; }
+    .match-btn-col { display:flex; flex-direction:column; gap:8px; min-width:110px; }
+
+    /* ===== Favorites / Like button ===== */
+    .fav-btn { background:none; border:1.5px solid #e5e7eb; border-radius:999px; padding:5px 12px; font-size:13px; color:#6b7280; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:5px; }
+    .fav-btn:hover { border-color:#f43f5e; color:#f43f5e; background:#fff1f2; }
+    .fav-btn.active { border-color:#f43f5e; color:#f43f5e; background:#fff1f2; }
+
+    /* ===== Application status chip ===== */
+    .status-chip { display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:4px 12px; font-size:12px; font-weight:800; }
+    .status-pending { background:#fef9c3; color:#854d0e; border:1px solid #fde047; }
+    .status-read { background:#dbeafe; color:#1d4ed8; border:1px solid #93c5fd; }
+    .status-accepted { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+    .status-rejected { background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; }
+
+    /* ===== Notification inbox ===== */
+    .notif-item { display:flex; gap:12px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--line); cursor:pointer; transition:background .12s; }
+    .notif-item:last-child { border-bottom:0; }
+    .notif-item:hover { background:#f8fafc; border-radius:8px; padding-left:8px; }
+    .notif-icon { width:38px; height:38px; border-radius:50%; background:var(--sky); display:grid; place-items:center; font-size:18px; flex-shrink:0; }
+    .notif-text { flex:1; }
+    .notif-text strong { font-size:13px; color:var(--navy); display:block; margin-bottom:2px; }
+    .notif-text span { font-size:12px; color:var(--muted); }
+    .notif-badge-new { background:#ef4444; color:white; border-radius:999px; padding:2px 7px; font-size:10px; font-weight:800; margin-left:6px; }
+
+    /* ===== Enterprise posts list ===== */
+    .post-card { border:1px solid var(--line); border-radius:10px; background:white; padding:16px; position:relative; transition:box-shadow .15s; }
+    .post-card:hover { box-shadow:0 4px 18px rgba(30,58,138,.10); }
+    .post-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+    .post-card h3 { margin:0; font-size:16px; color:var(--navy); }
+    .success-label { position:absolute; top:12px; right:12px; font-size:12px; font-weight:800; color:#16a34a; background:#dcfce7; border:1px solid #bbf7d0; border-radius:999px; padding:3px 10px; }
+
+    /* ===== Smart Ranking student card ===== */
+    .sr-student-card { border:1px solid var(--line); border-radius:12px; background:white; padding:16px; display:grid; grid-template-columns:56px 1fr auto; gap:14px; align-items:center; margin-bottom:10px; transition:box-shadow .15s; }
+    .sr-student-card:hover { box-shadow:0 4px 18px rgba(30,58,138,.10); }
+    .sr-avatar { width:50px; height:50px; border-radius:50%; background:var(--navy); color:white; display:grid; place-items:center; font-weight:800; font-size:20px; }
+    .sr-info strong { font-size:15px; color:var(--navy); display:block; margin-bottom:2px; }
+    .sr-info span { font-size:12px; color:var(--muted); }
+    .sr-actions { display:flex; flex-direction:column; gap:8px; min-width:130px; }
+
+    /* ===== Job screen for student (like general view) ===== */
+    .gen-job-card { border:1px solid var(--line); border-radius:10px; background:white; padding:16px; transition:box-shadow .15s, border-color .15s; }
+    .gen-job-card:hover { box-shadow:0 4px 18px rgba(30,58,138,.10); border-color:#bfdbfe; }
+    .gen-job-card h3 { margin:0 0 4px; color:var(--navy); font-size:15px; }
+
+    /* ===== Notification announcement banner ===== */
+    .notif-banner { background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%); border-radius:10px; padding:16px 20px; margin-bottom:18px; color:white; display:flex; gap:14px; align-items:center; }
+    .notif-banner-icon { font-size:28px; flex-shrink:0; }
+    .notif-banner h4 { margin:0 0 4px; font-size:15px; font-weight:800; }
+    .notif-banner p { margin:0; font-size:12px; color:#bfdbfe; }
+    .notif-banner-btn { margin-left:auto; flex-shrink:0; background:white; color:var(--navy); border:0; border-radius:7px; padding:8px 14px; font-weight:800; font-size:13px; cursor:pointer; }
+    .notif-banner-btn:hover { background:#f0f9ff; }
+
+    @media(max-width:860px){
+      .topbar{flex-direction:column;align-items:stretch;}
+      .app-body{grid-template-columns:1fr;}
+      .side{border-right:0;border-bottom:1px solid var(--line);display:flex;overflow-x:auto;gap:8px;}
+      .side button{width:auto;min-width:max-content;margin:0;}
+      .grid.two,.grid.three{grid-template-columns:1fr;}
+      .viewport-wrap{padding:12px;}
+      .job-row,.student-row,.verify-row,.enterprise-row,.post-row{grid-template-columns:1fr;}
+      .role-select-grid{grid-template-columns:1fr 1fr;}
+      .form-row{grid-template-columns:1fr;}
+      .benefit-grid{grid-template-columns:1fr;}
+      .match-job-card{grid-template-columns:46px 1fr;grid-template-rows:auto auto;}
+      .match-btn-col{flex-direction:row;grid-column:1/-1;}
+      .profile-fields-grid,.profile-edit-grid{grid-template-columns:1fr;}
+      .sr-student-card{grid-template-columns:50px 1fr;grid-template-rows:auto auto;}
+      .sr-actions{flex-direction:row;grid-column:1/-1;}
+    }
+
+    
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">DI</div>
+      <div>
+        <h1>DEK INTERN</h1>
+        <span>แพลตฟอร์มหางานฝึกงาน</span>
+      </div>
+    </div>
+    <div class="topbar-actions" id="topbarActions"></div>
+  </header>
+  <section class="viewport-wrap">
+    <div class="viewport" id="app"></div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<!-- Login Modal -->
+<div class="modal-overlay hidden" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+    <h2>&#x1F511; เข้าสู่ระบบ</h2>
+    <p class="modal-sub">เลือกบทบาทของคุณเพื่อเข้าสู่ระบบ</p>
+    <div class="role-select-grid" id="loginRoleGrid"></div>
+    <div id="loginFormArea"><p style="text-align:center;color:var(--muted);font-size:13px;margin-top:12px">กรุณาเลือกบทบาทของคุณ</p></div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal-overlay hidden" id="registerModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+    <h2>&#x2728; สมัครสมาชิก</h2>
+    <p class="modal-sub">กรุณากรอกข้อมูลเพื่อสร้างบัญชีผู้ใช้งานใหม่</p>
+    <div class="register-type-row" id="registerTypeRow"></div>
+    <div id="registerFormArea"></div>
+  </div>
+</div>
+
+<!-- Job Detail Modal -->
+<div class="modal-overlay hidden" id="jobDetailModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeModal('jobDetailModal')">&times;</button>
+    <div id="jobDetailContent"></div>
+  </div>
+</div>
+
+<!-- Apply Modal -->
+<div class="modal-overlay hidden" id="applyModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('applyModal')">&times;</button>
+    <h2>&#x1F4CB; สมัครงาน</h2>
+    <p class="modal-sub" id="applyJobTitle"></p>
+    <div id="applyFormContent"></div>
+  </div>
+</div>
+
+<!-- Student Profile Modal -->
+<div class="modal-overlay hidden" id="profileModal">
+  <div class="modal-box profile-modal-box">
+    <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
+    <div id="profileModalContent"></div>
+  </div>
+</div>
+
+<!-- Enterprise Profile Modal -->
+<div class="modal-overlay hidden" id="enterpriseProfileModal">
+  <div class="modal-box profile-modal-box">
+    <button class="modal-close" onclick="closeModal('enterpriseProfileModal')">&times;</button>
+    <div id="enterpriseProfileContent"></div>
+  </div>
+</div>
+
+<!-- All Applicants Modal -->
+<div class="modal-overlay hidden" id="allApplicantsModal">
+  <div class="modal-box ultra-wide">
+    <button class="modal-close" onclick="closeModal('allApplicantsModal')">&times;</button>
+    <div id="allApplicantsContent"></div>
+  </div>
+</div>
+
+<!-- Notification Inbox Modal -->
+<div class="modal-overlay hidden" id="notifModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('notifModal')">&times;</button>
+    <h2>📬 กล่องข้อความ</h2>
+    <p class="modal-sub">ประกาศงานใหม่และการแจ้งเตือนสำหรับคุณ</p>
+    <div id="notifListContent"></div>
+  </div>
+</div>
+
+<!-- Smart Ranking Modal -->
+<div class="modal-overlay hidden" id="smartRankingModal">
+  <div class="modal-box ultra-wide">
+    <button class="modal-close" onclick="closeModal('smartRankingModal')">&times;</button>
+    <div id="smartRankingContent"></div>
+  </div>
+</div>
+
+<!-- Student Resume Modal -->
+<div class="modal-overlay hidden" id="resumeModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('resumeModal')">&times;</button>
+    <div id="resumeContent"></div>
+  </div>
+</div>
+
+<!-- Institution Dashboard Detail Modal -->
+<div class="modal-overlay hidden" id="institutionDetailModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeModal('institutionDetailModal')">&times;</button>
+    <div id="institutionDetailContent"></div>
+  </div>
+</div>
+
+<!-- Admin Detail and Rejection Modals -->
+<div class="modal-overlay hidden" id="adminDetailModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeModal('adminDetailModal')">&times;</button>
+    <div id="adminDetailContent"></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="adminRejectModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('adminRejectModal')">&times;</button>
+    <h2>ไม่อนุมัติคำขอ</h2>
+    <p class="modal-sub" id="adminRejectTarget"></p>
+    <label for="adminRejectReason">รายละเอียดสาเหตุที่ไม่ผ่านการอนุมัติ</label>
+    <textarea id="adminRejectReason" placeholder="ระบุเหตุผลเพื่อแจ้งให้ผู้ยื่นคำขอทราบ"></textarea>
+    <div class="actions"><button class="danger" onclick="submitAdminReject()">ยืนยันไม่อนุมัติ</button><button class="ghost" onclick="closeModal('adminRejectModal')">ยกเลิก</button></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="adminReportsModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeModal('adminReportsModal')">&times;</button>
+    <div id="adminReportsContent"></div>
+  </div>
+</div>
+
+<!-- Skill Picker Modal (post-registration for students) -->
+<div class="modal-overlay hidden" id="skillPickerModal">
+  <div class="modal-box wide">
+    <h2>🎯 เลือกทักษะของคุณ</h2>
+    <p class="modal-sub">เลือกทักษะที่คุณมีเพื่อให้ระบบแนะนำงานที่เหมาะกับคุณได้ดียิ่งขึ้น</p>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <div>
+        <p style="margin:0;font-size:13px;font-weight:800;color:#15803d">สมัครสมาชิกสำเร็จ!</p>
+        <p style="margin:0;font-size:12px;color:#16a34a" id="skillPickerCount">ยังไม่ได้เลือกทักษะ</p>
+      </div>
+    </div>
+    <div id="skillPickerBody"></div>
+    <div class="actions" style="margin-top:18px">
+      <button class="primary" style="flex:1" onclick="saveSkillPicker()">บันทึกทักษะและเข้าสู่ระบบ</button>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========== Data ========== */
+const rolesData=[
+  {id:"student",label:"นักศึกษา",icon:"🎓",desc:"สมัครและติดตามงานฝึกงาน"},
+  {id:"enterprise",label:"สถานประกอบการ",icon:"🏢",desc:"ลงประกาศรับนักศึกษาฝึกงาน"},
+  {id:"institution",label:"สถาบันการศึกษา",icon:"🏫",desc:"ตรวจสอบและ Verify ทักษะ"},
+  {id:"admin",label:"ผู้ดูแลระบบ",icon:"🛡️",desc:"บริหารจัดการระบบ"}
+];
+
+const jobsData=[
+  {id:"job1",title:"Measurement Engineer",dept:"แผนก: Quality Assurance (QA)",
+   company:"บริษัท ออโต้พาร์ทส์ เทค จำกัด",tags:["วิศวกรรมอุตสาหการ","QA/QC","IATF 16949"],
+   salary:"16,000 - 23,000 บาท",location:"นิคมฯ เกตเวย์ซิตี้ ฉะเชิงเทรา",newGrad:true,
+   postedAt:"2026-07-11",
+   detail:{
+    notice:"ยินดีรับพิจารณาเด็กจบใหม่ที่จบตรงสาย (หากมีประสบการณ์ QC/QA มาก่อนจะพิจารณาเป็นพิเศษ)",
+    locationFull:"นิคมอุตสาหกรรมเกตเวย์ซิตี้ ต.หัวสำโรง อ.แปลงยาว จ.ฉะเชิงเทรา (ผู้ผลิตชิ้นส่วนยานยนต์)",
+    benefits:["โบนัสประจำปี 2 ครั้ง/ปี","ปรับขึ้นเงินเดือนประจำปี","รถรับส่ง + ยูนิฟอร์ม","ค่า OT","ค่าเบี้ยเลี้ยงอาหาร","ค่าเบี้ยเลี้ยงครองชีพ","ค่าเบี้ยเลี้ยงที่พัก","เบี้ยขยัน","กองทุนสำรองเลี้ยงชีพ","ประกันสุขภาพ OPD/IPD/ทันตกรรม/วัคซีน","เงินช่วยคลอดบุตร/แต่งงาน/งานศพ","ทริปท่องเที่ยวประจำปี","ตรวจสุขภาพประจำปี"],
+    workHours:"08:00-17:00 น. จ.-ศ. (เสาร์เฉลี่ย 5 วัน/ปี)",
+    responsibilities:["พัฒนาและปรับปรุงวิธีการวัดเพื่อเพิ่มความแม่นยำ","จัดทำ MSA Plan และวิเคราะห์ระบบ SPC","จัดเตรียม CF Jig และ Part Master","ตรวจสอบร่วมกับซัพพลายเออร์ ลูกค้า และทีม QA","สนับสนุน Full Layout / Special Request","ตรวจ IATF 16949 และ ISO 14001","วิเคราะห์ความเสี่ยง Turtle Chart + 6S"],
+    requirements:["ปริญญาตรี วิศวกรรม (อุตสาหการ/เครื่องกล/โลหะการ)","อ่านแบบ 2D/3D + GD&T ได้","พื้นฐานเครื่องมือวัดและ CMM","ความรู้ IATF + 5 Core Tools (MSA, SPC)","สื่อสารอังกฤษได้ดี","ทำงานภายใต้ความกดดันได้"],
+    extra:"เพศชาย | อายุ 22-35 ปี | แนบ Transcript",
+    note:"วันสัมภาษณ์มีแบบทดสอบเทคนิค QA/QC",
+    contact:{name:"คุณสมศรี",phone:"062-112-0000",line:"@12345",email:"hr.ssck.ck@gmail.com"}
+   }
+  },
+  {id:"job2",title:"นักพัฒนาซอฟต์แวร์ (Full-Stack Developer)",dept:"แผนก: Software Engineering",
+   company:"บริษัท ดิจิทัล โซลูชันส์ จำกัด",tags:["React","Node.js","PostgreSQL","TypeScript"],
+   salary:"18,000 - 28,000 บาท",location:"AIA Capital Center กรุงเทพฯ (Hybrid)",newGrad:true,
+   postedAt:"2026-07-10",
+   detail:{
+    notice:"ยินดีรับนักศึกษาฝึกงานและจบใหม่ทุกเพศ สาขา CS หรือที่เกี่ยวข้อง",
+    locationFull:"อาคาร AIA Capital Center ถ.รัชดาภิเษก กรุงเทพฯ (Hybrid 3 วัน/สัปดาห์)",
+    benefits:["โบนัสตามผลประกอบการ","ประกันสุขภาพกลุ่ม","WFH Allowance","MacBook","ทุนอบรม","ทริปประจำปี","ตรวจสุขภาพประจำปี"],
+    workHours:"09:00-18:00 น. จ.-ศ. (Flexible)",
+    responsibilities:["พัฒนา Web App Frontend + Backend","ออกแบบ REST API + DB Schema","Code Review และ Unit Test","Sprint Planning ใน Agile/Scrum","ปรับปรุง Performance และ Security"],
+    requirements:["ปริญญาตรี CS / Software Eng. หรือที่เกี่ยวข้อง","JavaScript/TypeScript, React หรือ Vue","REST API + SQL/NoSQL","Git","GitHub/Portfolio จะได้รับการพิจารณาเป็นพิเศษ"],
+    extra:"ทุกเพศ | อายุ 21-30 ปี",
+    note:"มีแบบทดสอบ Coding Challenge",
+    contact:{name:"คุณวิภาวี",phone:"02-123-4567",line:"@digitalsol",email:"recruit@digitalsol.co.th"}
+   }
+  },
+  {id:"job3",title:"นักวิเคราะห์และออกแบบระบบงาน (System Analyst)",dept:"แผนก: IT & Digital Transformation",
+   company:"บมจ. กรุงไทย ดิจิทัล จำกัด",tags:["Business Analysis","UML","SQL","Agile"],
+   salary:"20,000 - 30,000 บาท",location:"ถ.สุขุมวิท กรุงเทพฯ (On-site)",newGrad:false,
+   postedAt:"2026-07-08",
+   detail:{
+    notice:"ต้องการผู้มีประสบการณ์ IT หรือ Business Analysis อย่างน้อย 1 ปี",
+    locationFull:"สำนักงานใหญ่ ถ.สุขุมวิท กรุงเทพฯ (On-site)",
+    benefits:["เงินเดือน 13 เดือน","โบนัสประจำปี","กองทุนสำรองเลี้ยงชีพ","ประกันชีวิต+สุขภาพกลุ่ม","สินเชื่อพนักงาน","ทุนศึกษาต่อ","ตรวจสุขภาพประจำปี"],
+    workHours:"08:30-17:30 น. จ.-ศ.",
+    responsibilities:["วิเคราะห์ความต้องการธุรกิจ → IT Requirements","จัดทำ Use Case, DFD, Functional Spec","ประสานทีม Business และ Dev","ทดสอบ UAT + จัดทำ Test Case","วิเคราะห์ปัญหาและเสนอแนวทางแก้ไข"],
+    requirements:["ปริญญาตรี CS / IT / สารสนเทศ","ความรู้ UML, BPMN","เขียน SQL ได้ดี","ทักษะสื่อสารและนำเสนอ","Agile/Scrum จะพิจารณาเป็นพิเศษ"],
+    extra:"ทุกเพศ | อายุ 23-35 ปี | ประสบการณ์ 1 ปี+",
+    note:"สัมภาษณ์ 2 รอบ (HR + Technical)",
+    contact:{name:"คุณปิยะ",phone:"02-987-6543",line:"@ktbdigital",email:"hr@ktbdigital.co.th"}
+   }
+  },
+  {id:"job4",title:"นักวิทยาศาสตร์ข้อมูล (Data Scientist)",dept:"แผนก: Data & AI",
+   company:"บริษัท อินไซต์ อนาลิติกส์ จำกัด",tags:["Python","Machine Learning","SQL","Power BI"],
+   salary:"22,000 - 35,000 บาท",location:"True Digital Park กรุงเทพฯ (Hybrid)",newGrad:true,
+   postedAt:"2026-07-09",
+   detail:{
+    notice:"ยินดีรับนักศึกษาปีสุดท้ายหรือจบใหม่ที่มี Project ด้าน Data Science",
+    locationFull:"True Digital Park ถ.สุขุมวิท กรุงเทพฯ (Hybrid)",
+    benefits:["โบนัสตามผลงาน","ประกันสุขภาพกลุ่ม","สนับสนุน Online Course","อุปกรณ์ครบชุด","ทริปต่างประเทศประจำปี"],
+    workHours:"09:00-18:00 น. จ.-ศ. (Flexible)",
+    responsibilities:["วิเคราะห์ Big Data เพื่อ Business Insight","สร้างและ Deploy ML Model","พัฒนา Dashboard + Visualization","ร่วมกับทีม Product และ Engineering","SQL + Big Data Management"],
+    requirements:["ปริญญาตรี/โท Data Science / Statistics / Math / CS","Python (pandas, scikit-learn)","ML/DL + Statistics","SQL ขั้นสูง","Kaggle Portfolio จะพิจารณาเป็นพิเศษ"],
+    extra:"ทุกเพศ | อายุ 22-32 ปี",
+    note:"มี Data Analysis Case Study",
+    contact:{name:"คุณมนัส",phone:"02-345-6789",line:"@insightai",email:"talent@insightanalytics.co.th"}
+   }
+  }
+];
+
+/* ========== Enterprise Posts Data ========== */
+ const enterprisePostsData=[
+   {id:"ep1",jobId:"job2",title:"นักพัฒนาซอฟต์แวร์ (Full-Stack Developer)",applicants:12,status:"active",postedAt:"2026-07-10"},
+   {id:"ep2",jobId:"job4",title:"นักวิทยาศาสตร์ข้อมูล (Data Scientist)",applicants:8,status:"active",postedAt:"2026-07-09"},
+   {id:"ep3",jobId:"job1",title:"Measurement Engineer",applicants:5,status:"สำเร็จ",postedAt:"2026-06-15"}
+ ];
+
+/* ========== Smart Ranking Students ========== */
+const smartStudents=[
+  {id:"s1",name:"Kanda Somchai",university:"KMUTT",major:"Computer Science",gpa:"3.42",skills:["React","JavaScript","Git","English Communication"],score:96,initial:"K"},
+  {id:"s2",name:"Narin Phan",university:"Chulalongkorn Univ.",major:"Information Technology",gpa:"3.28",skills:["Python","SQL","Teamwork & Agile"],score:90,initial:"N"},
+  {id:"s3",name:"Pimchanok R.",university:"Kasetsart Univ.",major:"Software Engineering",gpa:"3.15",skills:["QA","Documentation","Teamwork & Agile"],score:84,initial:"P"},
+  {id:"s4",name:"Thanyaluck W.",university:"KMITL",major:"Computer Engineering",gpa:"3.05",skills:["JavaScript","Node.js"],score:72,initial:"T"}
+];
+
+/* ========== Admin approval data ========== */
+const adminEnterprises=[
+  {id:"org1",company:"Future Digital Co., Ltd.",registration:"0105568123456",representative:"ณัฐวุฒิ เจริญผล",email:"contact@futuredigital.co.th",phone:"02-456-7890",address:"88 อาคารเอฟดี ถนนรัชดาภิเษก กรุงเทพฯ",business:"พัฒนาซอฟต์แวร์และดิจิทัลโซลูชัน",documents:"หนังสือรับรองบริษัท, ภ.พ.20 และเอกสารผู้มีอำนาจลงนาม",submitted:"10 ก.ค. 2026",status:"pending"},
+  {id:"org2",company:"Green Growth Solutions จำกัด",registration:"0105569456789",representative:"พิมพ์ชนก วัฒนกุล",email:"hr@greengrowth.co.th",phone:"02-987-6543",address:"120 ถนนสุขุมวิท เขตวัฒนา กรุงเทพฯ",business:"พลังงานสะอาดและที่ปรึกษาด้านสิ่งแวดล้อม",documents:"หนังสือรับรองบริษัท และเอกสารสถานที่ประกอบการ",submitted:"11 ก.ค. 2026",status:"pending"}
+];
+const adminTeachers=[
+  {id:"teacher1",name:"ดร. อรทัย ศรีสุข",teacherId:"TCH-UBU-0142",university:"มหาวิทยาลัยอุบลราชธานี",faculty:"คณะวิทยาศาสตร์",program:"วิทยาการคอมพิวเตอร์",email:"orathai.s@ubu.ac.th",phone:"081-234-5678",position:"อาจารย์ประจำหลักสูตร",evidence:"บัตรประจำตัวบุคลากรและหนังสือรับรองจากคณะ",evidencePdf:"teacher-orathai-verification.pdf",submitted:"10 ก.ค. 2026",status:"pending"},
+  {id:"teacher2",name:"อาจารย์ กิตติพงศ์ พานทอง",teacherId:"TCH-KMUTT-0286",university:"มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี",faculty:"คณะเทคโนโลยีสารสนเทศ",program:"เทคโนโลยีสารสนเทศ",email:"kittipong.p@kmutt.ac.th",phone:"089-876-5432",position:"อาจารย์ผู้ประสานงานสหกิจศึกษา",evidence:"หนังสือแต่งตั้งผู้ประสานงานและบัตรบุคลากร",evidencePdf:"teacher-kittipong-verification.pdf",submitted:"11 ก.ค. 2026",status:"pending"}
+];
+const adminReportedPosts=[
+  {id:"post1",title:"รับนักศึกษาฝึกงาน Sales ออนไลน์ รายได้สูง",company:"Bright Deal Co., Ltd.",position:"Sales Intern",location:"ทำงานจากที่บ้าน (Remote)",allowance:"รายได้ตามผลงาน",workHours:"ยืดหยุ่นตามเวลาที่ตกลง",content:"รับนักศึกษาฝึกงานขายสินค้าออนไลน์ ทำงานจากที่บ้าน รายได้ตามผลงาน สนใจติดต่อทาง LINE: fastdeal99",responsibilities:["นำเสนอสินค้าและตอบแชตลูกค้าผ่านช่องทางออนไลน์","บันทึกยอดขายและสรุปผลการทำงานรายวัน"],requirements:["กำลังศึกษาในระดับอุดมศึกษา","ใช้สื่อสังคมออนไลน์ได้คล่อง"],benefits:["ทำงานแบบ Remote","มีค่าคอมมิชชั่นตามยอดขาย"],contact:"LINE: fastdeal99",reportedReason:"ผู้ใช้งานรายงานว่าอาจเป็นประกาศชวนทำงานที่ไม่ชัดเจนและมีข้อมูลค่าตอบแทนเกินจริง",reports:[{name:"นายสมชาย ใจดี",studentId:"6711454701",reason:"บริษัทนี้ไม่มีอยู่จริง และไม่พบข้อมูลการจดทะเบียนที่ตรวจสอบได้"},{name:"นางสาวพิมพ์ชนก แสงทอง",studentId:"6711454702",reason:"ประกาศไม่ได้ระบุเบี้ยเลี้ยงหรือผู้รับผิดชอบอย่างชัดเจน"},{name:"นายณรงค์ชัย ศรีสุข",studentId:"6711454703",reason:"ถูกขอให้ติดต่อผ่าน LINE ส่วนตัวและให้โอนเงินก่อนเริ่มงาน"},{name:"นางสาวกานดา สมชาย",studentId:"6711454700",reason:"รายละเอียดตำแหน่งและหน้าที่งานไม่ชัดเจน"}],submitted:"11 ก.ค. 2026",status:"reported"},
+  {id:"post2",title:"Intern Graphic Designer",company:"Creative Junction จำกัด",position:"Graphic Design Intern",location:"อาคาร Creative Hub, กรุงเทพฯ (Hybrid)",allowance:"5,000 บาท/เดือน",workHours:"จ.-ศ. 09:00-17:00 น.",content:"ร่วมออกแบบสื่อออนไลน์และสื่อสิ่งพิมพ์ ทำงานที่สำนักงาน 3 วันต่อสัปดาห์ มีพี่เลี้ยงดูแลและเบี้ยเลี้ยง 5,000 บาท/เดือน",responsibilities:["ออกแบบสื่อสำหรับโซเชียลมีเดีย","สนับสนุนทีมออกแบบในการจัดทำสื่อสิ่งพิมพ์"],requirements:["ใช้ Adobe Illustrator หรือ Photoshop ได้","มี Portfolio ผลงานออกแบบ"],benefits:["เบี้ยเลี้ยง 5,000 บาท/เดือน","มีพี่เลี้ยงดูแล"],contact:"hr@creativejunction.co.th",reportedReason:"ผู้ใช้งานรายงานว่ารายละเอียดสวัสดิการไม่ครบถ้วน",reports:[{name:"นายธนกร พูลทรัพย์",studentId:"6711454710",reason:"ต้องการให้บริษัทระบุสิทธิประโยชน์และเงื่อนไขการทำงานเพิ่มเติม"}],submitted:"10 ก.ค. 2026",status:"reported"}
+];
+
+/* ========== State ========== */
+const state={
+  role:"general",
+  loggedIn:{student:false,enterprise:false,institution:false,admin:false},
+  screen:{general:"home",student:"jobs",enterprise:"myPosts",institution:"verify",admin:"dashboard"},
+  pendingSkill:true,enterpriseApproved:false,postHidden:false,institutionProfileEditing:false,adminProfileEditing:false,adminRejecting:null,
+  selectedLoginRole:null,selectedRegisterType:"student",currentJobId:null,
+  favorites:["job1","job2"],
+  applications:[
+    {jobId:"job2",appliedAt:"2026-07-10",status:"อ่านแล้ว"},
+    {jobId:"job4",appliedAt:"2026-07-09",status:"ผ่านการสมัคร"}
+  ],
+  notifications:[
+    {id:"n1",jobId:"job1",title:"📢 ประกาศใหม่! Measurement Engineer",desc:"บริษัท ออโต้พาร์ทส์ เทค จำกัด — เหมาะสำหรับคุณ",read:false,time:"เมื่อกี้"},
+    {id:"n2",jobId:"job2",title:"📢 ประกาศใหม่! Full-Stack Developer",desc:"บริษัท ดิจิทัล โซลูชันส์ จำกัด — Match สูง 96%",read:false,time:"2 ชั่วโมงที่แล้ว"},
+    {id:"n3",jobId:"job4",title:"📢 ประกาศใหม่! Data Scientist",desc:"บริษัท อินไซต์ อนาลิติกส์ จำกัด — Python ตรงสาย",read:true,time:"เมื่อวาน"}
+  ],
+  studentProfile:{
+    name:"Kanda Somchai",
+    studentId:"6711454700",
+    university:"มหาวิทยาลัยอุบลราชธานี",
+    major:"Computer Science",
+    gpa:"3.42"
+  },
+  enterpriseProfile:{
+    company:"บริษัท ดิจิทัล โซลูชันส์ จำกัด",
+    name:"วิภาวี สุขใจ",
+    employeeId:"EMP-2026-014",
+    position:"เจ้าหน้าที่สรรหาบุคลากร",
+    department:"ฝ่ายทรัพยากรบุคคล",
+    phone:"02-123-4567",
+    email:"recruit@digitalsol.co.th",
+    address:"AIA Capital Center, กรุงเทพฯ"
+  },
+  adminProfile:{
+    name:"ธนกฤต วัฒนชัย",adminId:"ADM-2026-001",position:"ผู้ดูแลระบบ",department:"ฝ่ายบริหารแพลตฟอร์ม",phone:"02-111-2233",email:"admin@dekintern.co.th",line:"@dekintern-admin",address:"สำนักงานใหญ่ DEK INTERN, กรุงเทพฯ"
+  },
+  currentSmartRankPostId:null,
+  showPostJobForm:false
+};
+
+/* ========== Student skills data ========== */
+const studentSkillsData=[
+  {name:"JavaScript",verified:true},
+  {name:"React",verified:true},
+  {name:"Python",verified:false},
+  {name:"Git",verified:true},
+  {name:"SQL",verified:false},
+  {name:"English Communication",verified:true},
+  {name:"Teamwork & Agile",verified:false}
+];
+const skillGroups=[
+  {id:"technical",title:"Technical Skill",desc:"ความสามารถด้านเครื่องมือและเทคโนโลยี",options:["JavaScript","React","Python","Git","SQL","UI/UX Design"]},
+  {id:"soft",title:"Soft Skill",desc:"ทักษะการทำงานร่วมกับผู้อื่น",options:["การปรับตัว","ควบคุมอารมณ์ได้ดี","การทำงานเป็นทีม","การสื่อสาร","การบริหารเวลา"]},
+  {id:"cognitive",title:"Cognitive Skill",desc:"ทักษะด้านการคิด วิเคราะห์ และเรียนรู้",options:["การคิดวิเคราะห์","การแก้ปัญหา","ความคิดสร้างสรรค์","การตัดสินใจ","การเรียนรู้เร็ว"]}
+];
+state.studentSelectedSkills=["JavaScript","React","Python","Git","SQL","การปรับตัว","การทำงานเป็นทีม","การสื่อสาร","การคิดวิเคราะห์","การแก้ปัญหา"];
+
+/* ========== Menu ========== */
+const menu={
+  student:[["jobs","งานแนะนำ"],["jobboard","ประกาศงานทั้งหมด"],["applications","การสมัคร"],["favorites","รายการโปรด"],["profile","ข้อมูลส่วนตัว"]],
+  enterprise:[["myPosts","ประกาศของฉัน"],["profile","ข้อมูลส่วนตัว"]],
+  institution:[["verify","Dashboard"],["profile","ประวัติส่วนตัว"]],
+  admin:[["dashboard","Dashboard"],["enterprise","คำขออนุมัติ"],["moderation","ตรวจสอบโพสต์"],["profile","ประวัติส่วนตัว"]]
+};
+
+/* ========== Helpers ========== */
+function rLabel(id){return{student:"นักศึกษา",enterprise:"สถานประกอบการ",institution:"สถาบันการศึกษา",admin:"ผู้ดูแลระบบ",general:"ผู้ใช้งานทั่วไป"}[id]||id;}
+function notify(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove("show"),2800);}
+function openModal(id){document.getElementById(id).classList.remove("hidden");}
+function closeModal(id){document.getElementById(id).classList.add("hidden");}
+function unreadNotifCount(){return state.notifications.filter(n=>!n.read).length;}
+function statusChipClass(s){return s==="ผ่านการสมัคร"?"status-accepted":s==="ไม่ผ่านการสมัคร"?"status-rejected":s==="อ่านแล้ว"?"status-read":"status-pending";}
+function statusLabel(s){return s||"รอการตรวจสอบ";}
+
+/* ========== Topbar ========== */
+function renderTopbar(){
+  const el=document.getElementById("topbarActions");
+  if(state.role==="general"){
+    el.innerHTML=`<button class="btn-login" id="btn-login-topbar" onclick="openLoginModal()">🔑 เข้าสู่ระบบ</button><button class="btn-register" id="btn-register-topbar" onclick="openRegisterModal()">สมัครสมาชิก</button>`;
+  }else{
+    const isStudent=state.role==="student";
+    const hasProfile=state.role==="student"||state.role==="enterprise";
+    const avatarClass=hasProfile?"user-avatar clickable":"user-avatar";
+    const avatarClick=state.role==="student"?`onclick="setScreen('profile')" title="ดูข้อมูลส่วนตัว"`:state.role==="enterprise"?`onclick="setScreen('profile')" title="ดูข้อมูลส่วนตัว"`:"";
+    const initial=state.role[0].toUpperCase();
+    const unread=unreadNotifCount();
+    const notifBellHtml=isStudent?`<button class="notif-btn" id="btn-notif-inbox" onclick="openNotifModal()" title="กล่องข้อความ">📬${unread>0?`<span class="notif-dot"></span>`:""}</button>`:"";
+    el.innerHTML=`${notifBellHtml}<div class="user-info"><div class="${avatarClass}" id="topbar-avatar" ${avatarClick}>${initial}</div><span>${rLabel(state.role)}</span></div><button class="btn-logout" id="btn-logout-topbar" onclick="logout()">ออกจากระบบ</button>`;
+  }
+}
+function logout(){state.loggedIn[state.role]=false;state.role="general";notify("ออกจากระบบเรียบร้อย");render();}
+
+/* ========== Login ========== */
+function openLoginModal(){
+  state.selectedLoginRole=null;
+  const grid=document.getElementById("loginRoleGrid");
+  grid.style.display="";
+  grid.innerHTML=rolesData.map(r=>`<div class="role-card" id="lrc-${r.id}" onclick="selectLoginRole('${r.id}')"><div class="role-icon">${r.icon}</div><div class="role-name">${r.label}</div><div class="role-desc">${r.desc}</div></div>`).join("");
+  document.getElementById("loginFormArea").innerHTML=`<p style="text-align:center;color:var(--muted);font-size:13px;margin-top:12px">กรุณาเลือกบทบาทของคุณ</p>`;
+  openModal("loginModal");
+}
+function selectLoginRole(rid){
+  state.selectedLoginRole=rid;
+  document.getElementById("loginRoleGrid").style.display="none";
+  document.getElementById("loginFormArea").innerHTML=`
+    <p style="font-size:13px;color:var(--muted);margin:0 0 14px">บทบาท: <strong style="color:var(--navy)">${rLabel(rid)}</strong>
+      <button onclick="resetLoginRole()" style="background:none;border:none;color:var(--blue);font-size:12px;cursor:pointer;margin-left:8px;padding:0;font-weight:700">เปลี่ยนบทบาท</button>
+    </p>
+    <label>อีเมล</label><input type="email" id="loginEmail" value="${rid}@demo.local">
+    <label>รหัสผ่าน</label><input type="password" id="loginPassword" value="password">
+    <div class="actions"><button class="primary" style="flex:1" id="btn-do-login" onclick="doLogin()">🔑 เข้าสู่ระบบ</button><button class="ghost" onclick="closeModal('loginModal')">ยกเลิก</button></div>`;
+}
+function resetLoginRole(){
+  state.selectedLoginRole=null;
+  document.getElementById("loginRoleGrid").style.display="";
+  document.getElementById("loginFormArea").innerHTML=`<p style="text-align:center;color:var(--muted);font-size:13px;margin-top:12px">กรุณาเลือกบทบาทของคุณ</p>`;
+}
+function doLogin(){
+  const rid=state.selectedLoginRole;if(!rid){notify("กรุณาเลือกบทบาทก่อน");return;}
+  state.loggedIn[rid]=true;state.role=rid;closeModal("loginModal");notify("เข้าสู่ระบบสำเร็จในฐานะ "+rLabel(rid));render();
+}
+
+/* ========== Register ========== */
+function openRegisterModal(fromJob=false){
+  state.selectedRegisterType="student";
+  const typeRow=document.getElementById("registerTypeRow");
+  if(fromJob){
+    typeRow.innerHTML="";
+    document.querySelector("#registerModal h2").textContent="สมัครสมาชิก (นักศึกษา)";
+  }else{
+    document.querySelector("#registerModal h2").textContent="สมัครสมาชิก";
+    const types=[{id:"student",label:"นักศึกษา"},{id:"enterprise",label:"สถานประกอบการ"},{id:"institution",label:"สถาบันการศึกษา"}];
+    typeRow.innerHTML=types.map(t=>`<button class="register-type-btn ${t.id===state.selectedRegisterType?"selected":""}" id="rbt-${t.id}" onclick="selectRegisterType('${t.id}')">${t.label}</button>`).join("");
+  }
+  renderRegForm();openModal("registerModal");
+}
+function selectRegisterType(type){state.selectedRegisterType=type;document.querySelectorAll(".register-type-btn").forEach(b=>b.classList.remove("selected"));document.getElementById("rbt-"+type).classList.add("selected");renderRegForm();}
+function renderRegForm(){
+  const tp=state.selectedRegisterType;
+  let ex="";
+  if(tp==="student")ex=`<label>สถาบันการศึกษา</label><input placeholder="ชื่อมหาวิทยาลัย"><label>สาขาวิชา</label><input placeholder="Computer Science">`;
+  if(tp==="enterprise")ex=`<label>ชื่อบริษัท/องค์กร</label><input placeholder="บริษัท XYZ จำกัด"><label>เลขทะเบียนนิติบุคคล</label><input placeholder="0105560000000">`;
+  if(tp==="institution")ex=`<label>ชื่อสถาบัน</label><input placeholder="มหาวิทยาลัย..."><label>คณะ/ภาควิชา</label><input placeholder="คณะวิศวกรรมศาสตร์">`;
+  document.getElementById("registerFormArea").innerHTML=`<label>ชื่อ-นามสกุล</label><input placeholder="กรอกชื่อ-นามสกุล"><label>อีเมล</label><input type="email" placeholder="example@email.com"><label>เบอร์โทรศัพท์</label><input type="tel" placeholder="0XX-XXX-XXXX">${ex}<label>รหัสผ่าน</label><input type="password" placeholder="อย่างน้อย 8 ตัว"><label>ยืนยันรหัสผ่าน</label><input type="password" placeholder="กรอกอีกครั้ง"><div class="actions"><button class="primary" style="flex:1" id="btn-do-register" onclick="doRegister()">สมัครสมาชิก</button><button class="ghost" onclick="closeModal('registerModal')">ยกเลิก</button></div>`;
+}
+function doRegister(){
+  const roleType=state.selectedRegisterType;
+  closeModal("registerModal");
+  const loginRoleMap={student:"student",enterprise:"enterprise",institution:"institution"};
+  const loginRole=loginRoleMap[roleType];
+  if(loginRole){
+    state.loggedIn[loginRole]=true;
+    state.role=loginRole;
+    if(loginRole==="student"){
+      // Show skill selection modal after student registration
+      openSkillPickerModal();
+    } else {
+      notify("สมัครสมาชิกสำเร็จ! ยินดีต้อนรับสู่ DEK INTERN");
+      render();
+    }
+  }else{
+    notify("สมัครสมาชิกสำเร็จ! กรุณาตรวจสอบอีเมลของคุณ");
+  }
+}
+
+/* ========== Skill Picker Modal (post-registration) ========== */
+const skillPickerGroups=[
+  {id:"technical",title:"Technical Skill",icon:"",desc:"ความสามารถด้านเครื่องมือและเทคโนโลยี",color:"#eff6ff",borderColor:"#bfdbfe",textColor:"#1d4ed8",
+   options:["Python","JavaScript","HTML","CSS","SQL","React","Node.js","Java","C/C++","Git","TypeScript","PHP","MongoDB","Docker","UI/UX Design","Power BI","Excel","Machine Learning"]},
+  {id:"soft",title:"Soft Skill",icon:"",desc:"ทักษะการทำงานร่วมกับผู้อื่น",color:"#f0fdf4",borderColor:"#bbf7d0",textColor:"#15803d",
+   options:["การสื่อสาร","การทำงานเป็นทีม","การบริหารเวลา","การปรับตัว","ภาวะผู้นำ","การนำเสนอ","ควบคุมอารมณ์ได้ดี","การเจรจาต่อรอง","ความคิดสร้างสรรค์","มนุษยสัมพันธ์"]},
+  {id:"cognitive",title:"Cognitive Skill",icon:"",desc:"ทักษะด้านการคิด วิเคราะห์ และเรียนรู้",color:"#faf5ff",borderColor:"#d8b4fe",textColor:"#7c3aed",
+   options:["การคิดวิเคราะห์","การแก้ปัญหา","การตัดสินใจ","การเรียนรู้เร็ว","การคิดเชิงระบบ","การวางแผน","ความจำดี","การประเมินสถานการณ์"]}
+];
+let skillPickerSelected=new Set();
+function openSkillPickerModal(){
+  skillPickerSelected=new Set(state.studentSelectedSkills||[]);
+  renderSkillPickerModal();
+  openModal("skillPickerModal");
+}
+function toggleSkillPick(skill){
+  if(skillPickerSelected.has(skill)){skillPickerSelected.delete(skill);}
+  else{skillPickerSelected.add(skill);}
+  renderSkillPickerModal();
+}
+function renderSkillPickerModal(){
+  const html=skillPickerGroups.map(group=>{
+    const optionsHtml=group.options.map(opt=>{
+      const sel=skillPickerSelected.has(opt);
+      return `<button onclick="toggleSkillPick('${opt}')" style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;border:1.5px solid ${sel?group.borderColor:"#d1d5db"};background:${sel?group.color:"#f9fafb"};color:${sel?group.textColor:"#6b7280"};">${sel?"✓ ":""}${opt}</button>`;
+    }).join("");
+    return `<div style="border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px;background:#fff">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:18px">${group.icon}</span><strong style="color:var(--navy);font-size:14px">${group.title}</strong></div>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 10px">${group.desc}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">${optionsHtml}</div>
+    </div>`;
+  }).join("");
+  const count=skillPickerSelected.size;
+  document.getElementById("skillPickerBody").innerHTML=html;
+  document.getElementById("skillPickerCount").textContent=count>0?`เลือกแล้ว ${count} ทักษะ`:"ยังไม่ได้เลือกทักษะ";
+}
+function saveSkillPicker(){
+  state.studentSelectedSkills=Array.from(skillPickerSelected);
+  closeModal("skillPickerModal");
+  notify("สมัครสมาชิกสำเร็จ! บันทึกทักษะเรียบร้อยแล้ว");
+  render();
+}
+function skipSkillPicker(){
+  closeModal("skillPickerModal");
+  notify("สมัครสมาชิกสำเร็จ! ยินดีต้อนรับสู่ DEK INTERN");
+  render();
+}
+
+/* ========== Favorites ========== */
+function toggleFavorite(jobId,e){
+  if(e){e.stopPropagation();}
+  const idx=state.favorites.indexOf(jobId);
+  if(idx>=0){state.favorites.splice(idx,1);notify("ลบออกจากรายการโปรดแล้ว");}
+  else{state.favorites.push(jobId);notify("❤️ เพิ่มในรายการโปรดแล้ว");}
+  render();
+}
+function isFav(jobId){return state.favorites.includes(jobId);}
+
+/* ========== Notifications ========== */
+function openNotifModal(){
+  const unread=state.notifications.filter(n=>!n.read).length;
+  const html=state.notifications.map(n=>`
+    <div class="notif-item" onclick="readNotif('${n.id}','${n.jobId}')">
+      <div class="notif-icon">${n.read?"📨":"📬"}</div>
+      <div class="notif-text">
+        <strong>${n.title}${!n.read?`<span class="notif-badge-new">ใหม่</span>`:""}</strong>
+        <span>${n.desc}</span><br>
+        <span style="font-size:11px;color:#94a3b8;margin-top:2px;display:block">${n.time}</span>
+      </div>
+    </div>`).join("");
+  document.getElementById("notifListContent").innerHTML=html||`<p style="color:var(--muted);text-align:center;padding:20px">ไม่มีการแจ้งเตือน</p>`;
+  openModal("notifModal");
+}
+function readNotif(nId,jobId){
+  const n=state.notifications.find(x=>x.id===nId);
+  if(n)n.read=true;
+  closeModal("notifModal");
+  renderTopbar();
+  openJobDetail(jobId);
+}
+
+/* ========== Job Detail ========== */
+function openJobDetail(jobId){
+  const job=jobsData.find(j=>j.id===jobId);if(!job)return;
+  state.currentJobId=jobId;const d=job.detail;
+  const isFaved=isFav(jobId);
+  const alreadyApplied=state.applications.some(a=>a.jobId===jobId);
+  let applyBtn="";
+  if(state.role==="student"){
+    if(alreadyApplied){
+      applyBtn=`<button class="ghost" style="width:100%;margin-top:4px" disabled>สมัครแล้ว</button>`;
+    }else{
+      applyBtn=`<button class="success" style="width:100%;margin-top:4px" onclick="openApplyForm('${job.id}')">สมัครงานตำแหน่งนี้</button>`;
+    }
+
+  }
+  if(state.role==="general"){
+    applyBtn=`<button class="success" style="width:100%;margin-top:4px" onclick="registerFromJob('${job.id}')">สมัคร</button>`;
+  }
+  const favHtml=state.role==="student"?`<button class="fav-btn ${isFaved?"active":""}" onclick="toggleFavAndRefreshModal('${jobId}')">${isFaved?"❤️ บันทึกแล้ว":"🤍 บันทึกรายการโปรด"}</button>`:"";
+  document.getElementById("jobDetailContent").innerHTML=`
+    <div class="job-detail-header">
+      <p style="margin:0 0 6px;font-size:12px;color:#bfdbfe">📋 ประกาศรับสมัครงาน | 📌 ตำแหน่งงาน</p>
+      <h3 style="margin:0 0 4px;font-size:20px">${job.title}</h3>
+      <p style="margin:0 0 4px;font-size:13px;color:#bfdbfe">${job.dept}</p>
+      <p style="margin:0;font-size:12px;color:#93c5fd">🏢 ${job.company}</p>
+    </div>
+    ${job.newGrad?`<p style="background:#fef9c3;border:1px solid #fde047;border-radius:6px;padding:10px;font-size:13px;color:#854d0e;margin:0 0 14px">📢 ${d.notice}</p>`:""}
+    <div class="job-detail-section"><h4>📍 สถานที่ปฏิบัติงาน</h4><p>${d.locationFull}</p></div>
+    <div class="job-detail-section"><h4>💰 เงินเดือน</h4><span class="salary-badge">${job.salary}</span></div>
+    <div class="job-detail-section"><h4>🎁 สวัสดิการ</h4><div class="benefit-grid">${d.benefits.map(b=>`<div class="benefit-item">✅ <span>${b}</span></div>`).join("")}</div></div>
+    <div class="job-detail-section"><h4>🕒 เวลาทำงาน</h4><p>${d.workHours}</p></div>
+    <div class="job-detail-section"><h4>🛠️ หน้าที่ความรับผิดชอบ</h4><ul>${d.responsibilities.map(r=>`<li>${r}</li>`).join("")}</ul></div>
+    <div class="job-detail-section"><h4>🎯 คุณสมบัติผู้สมัคร</h4><ul>${d.requirements.map(r=>`<li>${r}</li>`).join("")}</ul></div>
+    <div class="job-detail-section"><h4>📌 ข้อกำหนดเพิ่มเติม</h4><p>${d.extra}</p></div>
+    ${d.note?`<div class="job-detail-section"><h4>📝 หมายเหตุ</h4><p>${d.note}</p></div>`:""}
+    <div class="job-detail-section"><h4>📞 ช่องทางการสมัครงาน</h4>
+      <div class="contact-box">
+        <p>👤 <strong>ผู้ประสานงาน:</strong> ${d.contact.name}</p>
+        <p>📞 <strong>โทร:</strong> ${d.contact.phone}</p>
+        <p>💬 <strong>Line ID:</strong> ${d.contact.line}</p>
+        <p>📧 <strong>Email:</strong> ${d.contact.email}</p>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">${favHtml}${applyBtn}<button class="ghost" style="width:100%" onclick="closeModal('jobDetailModal')">ปิด</button></div>`;
+  openModal("jobDetailModal");
+}
+function registerFromJob(jobId){
+  state.currentJobId=jobId;
+  closeModal("jobDetailModal");
+  openRegisterModal(true);
+}
+function toggleFavAndRefreshModal(jobId){
+  toggleFavorite(jobId,null);
+  // re-render modal content without closing
+  openJobDetail(jobId);
+}
+
+/* ========== Apply Form ========== */
+function openApplyForm(jobId){
+  const job=jobsData.find(j=>j.id===jobId)||jobsData.find(j=>j.id===state.currentJobId);
+  closeModal("jobDetailModal");
+  state.currentJobId=jobId||(job&&job.id)||state.currentJobId;
+  document.getElementById("applyJobTitle").textContent="ตำแหน่ง: "+(job?job.title:"")+" — "+(job?job.company:"");
+  document.getElementById("applyFormContent").innerHTML=`
+    <div class="form-row">
+      <div><label>ชื่อ</label><input placeholder="ชื่อจริง"></div>
+      <div><label>นามสกุล</label><input placeholder="นามสกุล"></div>
+    </div>
+    <label>เบอร์โทรติดต่อ</label><input type="tel" placeholder="0XX-XXX-XXXX">
+    <label>อีเมล</label><input type="email" placeholder="your@email.com">
+    <label>Line ID (ไม่บังคับ)</label><input placeholder="@lineid">
+    <label>แนบ Resume / CV</label>
+    <div class="file-upload-area" onclick="notify('เปิด File picker สำหรับ Resume')">
+      <div class="upload-icon">📄</div>
+      <p><strong>คลิกเพื่ออัปโหลด Resume</strong></p>
+      <p>รองรับ PDF, DOC, DOCX (ไม่เกิน 5 MB)</p>
+    </div>
+    <label>Cover Letter (ไม่บังคับ)</label>
+    <textarea placeholder="แนะนำตัวเองและเหตุผลที่สนใจตำแหน่งนี้..."></textarea>
+    <div class="actions">
+      <button class="success" style="flex:1" onclick="submitApplication('${state.currentJobId}')">ส่งใบสมัคร</button>
+      <button class="ghost" onclick="closeModal('applyModal')">ยกเลิก</button>
+    </div>`;
+  openModal("applyModal");
+
+}
+
+function submitApplication(jobId){
+  const jid=jobId||state.currentJobId;
+  if(jid && !state.applications.some(a=>a.jobId===jid)){
+    state.applications.push({jobId:jid,appliedAt:new Date().toISOString().slice(0,10),status:"รอการตรวจสอบ"});
+  }
+  closeModal("applyModal");
+  notify("ส่งใบสมัครงานเรียบร้อยแล้ว");
+  state.screen.student="applications";
+  render();
+}
+
+/* ========== Student Profile Modal ========== */
+let profileEditMode=false;
+function openProfileModal(){
+  profileEditMode=false;
+  renderProfileModal();
+  openModal("profileModal");
+}
+function renderProfileModal(){
+  const s=state.studentProfile;
+  const initial=s.name?s.name[0].toUpperCase():"K";
+  const coverEditable=profileEditMode?"editable":"";
+  const coverClick=profileEditMode?`onclick="notify('เปิด File picker เพื่อเปลี่ยนรูปปก')"` :"";
+  const skillsHtml=studentSkillsData.map(sk=>`<span class="skill-badge ${sk.verified?"verified":""}">${sk.verified?"✓ ":""}${sk.name}</span>`).join("");
+
+  let bodyHtml="";
+  if(profileEditMode){
+    bodyHtml=`
+      <div class="profile-edit-grid">
+        <div><label>ชื่อ-นามสกุล</label><input id="ef-name" value="${s.name}"></div>
+        <div><label>รหัสนักศึกษา</label><input id="ef-id" value="${s.studentId}"></div>
+        <div><label>มหาวิทยาลัย</label><input id="ef-univ" value="${s.university}"></div>
+        <div><label>สาขาวิชา</label><input id="ef-major" value="${s.major}"></div>
+        <div><label>GPA</label><input id="ef-gpa" value="${s.gpa}"></div>
+      </div>`;
+  }else{
+    bodyHtml=`
+      <div class="profile-fields-grid">
+        <div class="profile-field-box"><p class="profile-field-label">ชื่อ-นามสกุล</p><p class="profile-field-value">${s.name}</p></div>
+        <div class="profile-field-box"><p class="profile-field-label">รหัสนักศึกษา</p><p class="profile-field-value">${s.studentId}</p></div>
+        <div class="profile-field-box"><p class="profile-field-label">มหาวิทยาลัย</p><p class="profile-field-value">${s.university}</p></div>
+        <div class="profile-field-box"><p class="profile-field-label">สาขาวิชา</p><p class="profile-field-value">${s.major}</p></div>
+        <div class="profile-field-box"><p class="profile-field-label">GPA</p><p class="profile-field-value">${s.gpa}</p></div>
+      </div>`;
+  }
+
+  document.getElementById("profileModalContent").innerHTML=`
+    <div class="cover-photo-outer">
+      <div class="cover-photo-wrap ${coverEditable}" ${coverClick}>
+        <div class="cover-photo-overlay"><span>เปลี่ยนรูปปก</span></div>
+      </div>
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar-large">${initial}</div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-name-row">
+        <div>
+          <p class="profile-name">${s.name}</p>
+          <p class="profile-sub-text">${s.major} · ${s.university}</p>
+        </div>
+        <div>
+          ${profileEditMode
+            ?`<div style="display:flex;gap:8px">
+                <button class="success" onclick="saveStudentProfile()">บันทึก</button>
+                <button class="ghost" onclick="profileEditMode=false;renderProfileModal()">ยกเลิก</button>
+              </div>`
+            :``
+          }
+        </div>
+      </div>
+      ${bodyHtml}
+      <div style="margin-top:6px">
+        <p class="skills-section-title">ทักษะ (Skills)</p>
+        <div class="skill-badges-wrap">${skillsHtml}</div>
+      </div>
+    </div>`;
+}
+function saveStudentProfile(){
+  state.studentProfile={
+    name:document.getElementById("ef-name").value||state.studentProfile.name,
+    studentId:document.getElementById("ef-id").value||state.studentProfile.studentId,
+    university:document.getElementById("ef-univ").value||state.studentProfile.university,
+    major:document.getElementById("ef-major").value||state.studentProfile.major,
+    gpa:document.getElementById("ef-gpa").value||state.studentProfile.gpa
+  };
+  profileEditMode=false;
+  renderProfileModal();
+  notify("บันทึกโปรไฟล์เรียบร้อยแล้ว");
+  renderTopbar();
+}
+
+let studentPageEditMode=false;
+function skillGroupsHtml(editable=false){
+  return skillGroups.map(group=>`<div class="skill-category"><h4>${group.title}</h4><p>${group.desc}</p><div class="skill-options">${group.options.map(option=>editable
+    ?`<label class="skill-option"><input type="checkbox" name="student-skill" value="${option}" ${state.studentSelectedSkills.includes(option)?"checked":""}> ${option}</label>`
+    :state.studentSelectedSkills.includes(option)?`<span class="skill-badge verified">✓ ${option}</span>`:"").join("")}</div></div>`).join("");
+}
+function studentProfilePage(){
+  const s=state.studentProfile;
+  const fields=studentPageEditMode?`<div class="profile-edit-grid"><div><label>ชื่อ-นามสกุล</label><input id="spf-name" value="${s.name}"></div><div><label>รหัสนักศึกษา</label><input id="spf-id" value="${s.studentId}"></div><div><label>มหาวิทยาลัย</label><input id="spf-univ" value="${s.university}"></div><div><label>สาขาวิชา</label><input id="spf-major" value="${s.major}"></div><div><label>GPA</label><input id="spf-gpa" value="${s.gpa}"></div></div>`
+    :`<div class="profile-fields-grid"><div class="profile-field-box"><p class="profile-field-label">ชื่อ-นามสกุล</p><p class="profile-field-value">${s.name}</p></div><div class="profile-field-box"><p class="profile-field-label">รหัสนักศึกษา</p><p class="profile-field-value">${s.studentId}</p></div><div class="profile-field-box"><p class="profile-field-label">มหาวิทยาลัย</p><p class="profile-field-value">${s.university}</p></div><div class="profile-field-box"><p class="profile-field-label">สาขาวิชา</p><p class="profile-field-value">${s.major}</p></div><div class="profile-field-box"><p class="profile-field-label">GPA</p><p class="profile-field-value">${s.gpa}</p></div></div>`;
+  return `<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>👤 ข้อมูลส่วนตัว</h3><p class="small">ประวัติส่วนตัวและทักษะของนักศึกษา</p></div>${studentPageEditMode?`<div class="actions" style="margin:0"><button class="success" onclick="saveStudentProfilePage()">💾 บันทึก</button><button class="ghost" onclick="studentPageEditMode=false;render()">ยกเลิก</button></div>`:`<button class="secondary" onclick="studentPageEditMode=true;render()">แก้ไขข้อมูล</button>`}</div>${fields}<div style="margin-top:18px"><p class="skills-section-title">🎯 ทักษะ (Skills)</p>${skillGroupsHtml(studentPageEditMode)}</div></div>`;
+}
+function saveStudentProfilePage(){
+  state.studentProfile={name:document.getElementById("spf-name").value||state.studentProfile.name,studentId:document.getElementById("spf-id").value||state.studentProfile.studentId,university:document.getElementById("spf-univ").value||state.studentProfile.university,major:document.getElementById("spf-major").value||state.studentProfile.major,gpa:document.getElementById("spf-gpa").value||state.studentProfile.gpa};
+  state.studentSelectedSkills=Array.from(document.querySelectorAll('input[name="student-skill"]:checked')).map(el=>el.value);
+  studentPageEditMode=false; renderTopbar(); render(); notify("บันทึกข้อมูลส่วนตัวและทักษะเรียบร้อยแล้ว");
+}
+
+let enterprisePageEditMode=false;
+function enterpriseProfilePage(){
+  const e=state.enterpriseProfile;
+  const fields=enterprisePageEditMode?`<div class="profile-edit-grid"><div><label>ชื่อบริษัท</label><input id="epf-company" value="${e.company}"></div><div><label>ชื่อ-นามสกุล</label><input id="epf-name" value="${e.name}"></div><div><label>รหัสพนักงาน</label><input id="epf-id" value="${e.employeeId}"></div><div><label>ตำแหน่ง</label><input id="epf-position" value="${e.position}"></div><div><label>แผนก</label><input id="epf-department" value="${e.department}"></div><div><label>เบอร์โทรศัพท์</label><input id="epf-phone" value="${e.phone}"></div><div><label>อีเมล</label><input id="epf-email" value="${e.email}"></div><div><label>ที่อยู่บริษัท</label><input id="epf-address" value="${e.address}"></div></div>`
+  :`<div class="profile-fields-grid"><div class="profile-field-box"><p class="profile-field-label">ชื่อบริษัท</p><p class="profile-field-value">${e.company}</p></div><div class="profile-field-box"><p class="profile-field-label">ชื่อ-นามสกุล</p><p class="profile-field-value">${e.name}</p></div><div class="profile-field-box"><p class="profile-field-label">รหัสพนักงาน</p><p class="profile-field-value">${e.employeeId}</p></div><div class="profile-field-box"><p class="profile-field-label">ตำแหน่ง</p><p class="profile-field-value">${e.position}</p></div><div class="profile-field-box"><p class="profile-field-label">แผนก</p><p class="profile-field-value">${e.department}</p></div><div class="profile-field-box"><p class="profile-field-label">เบอร์โทรศัพท์</p><p class="profile-field-value">${e.phone}</p></div><div class="profile-field-box"><p class="profile-field-label">อีเมล</p><p class="profile-field-value">${e.email}</p></div><div class="profile-field-box"><p class="profile-field-label">ที่อยู่บริษัท</p><p class="profile-field-value">${e.address}</p></div></div>`;
+  return `<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>ข้อมูลส่วนตัวสถานประกอบการ</h3><p class="small">ข้อมูลบริษัทและผู้ประสานงาน</p></div>${enterprisePageEditMode?`<div class="actions" style="margin:0"><button class="success" onclick="saveEnterpriseProfile()">💾 บันทึก</button><button class="ghost" onclick="enterprisePageEditMode=false;render()">ยกเลิก</button></div>`:`<button class="secondary" onclick="enterprisePageEditMode=true;render()">แก้ไขข้อมูล</button>`}</div>${fields}</div>`;
+}
+function saveEnterpriseProfile(){
+  const e=state.enterpriseProfile; ["company","name","id","position","department","phone","email","address"].forEach(k=>{const el=document.getElementById("epf-"+k); if(el)e[k==="id"?"employeeId":k]=el.value||e[k==="id"?"employeeId":k];});
+  enterprisePageEditMode=false; render(); notify("บันทึกข้อมูลสถานประกอบการเรียบร้อยแล้ว");
+}
+
+/* ========== Layout helpers ========== */
+function appHeader(title,sub,badge){return `<div class="app-header"><div><h2>${title}</h2><p>${sub}</p></div><span class="badge">${badge}</span></div>`;}
+function layout(role,content){
+  const active=state.screen[role];
+  return `${appHeader(rLabel(role),""+role.toUpperCase())}
+  <div class="app-body"><aside class="side">${menu[role].map(item=>`<button class="${active===item[0]?"active":""}" onclick="setScreen('${item[0]}')">${item[1]}</button>`).join("")}</aside><section class="content">${content}</section></div>`;
+}
+function setScreen(screen){state.screen[state.role]=screen;render();}
+
+/* ========== General View ========== */
+function generalView(){
+  return `${appHeader("DEK INTERN","แพลตฟอร์มหางานฝึกงานออนไลน์","Public")}<section class="jobs" id="jobList">${jobsData.map(job=>`<article class="job-row"><div><h3>${job.title}</h3><p class="small">${job.company} · 📍 ${job.location}</p><div class="tagbar">${job.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div></div><button class="secondary" onclick="openJobDetail('${job.id}')">ดูรายละเอียด</button></article>`).join("")}</section>`;
+}
+
+/* ========== Student View ========== */
+function studentView(){
+  const sc=state.screen.student;
+
+  if(sc==="profile") return layout("student",studentProfilePage());
+
+  // Job Recommendations (Smart Ranking)
+  if(sc==="jobs"){
+    const mySkills=studentSkillsData.map(s=>s.name.toLowerCase());
+    const ranked=jobsData.map(job=>{
+      const matchedTags=job.tags.filter(t=>mySkills.some(s=>s.includes(t.toLowerCase())||t.toLowerCase().includes(s)));
+      const unmatchedTags=job.tags.filter(t=>!matchedTags.includes(t));
+      const score=job.tags.length>0?Math.round((matchedTags.length/job.tags.length)*100):0;
+      return{...job,matchedTags,unmatchedTags,score};
+    }).sort((a,b)=>b.score-a.score);
+    const rankClass=i=>i===0?"rank-1":i===1?"rank-2":i===2?"rank-3":"rank-other";
+    const unread=state.notifications.filter(n=>!n.read).length;
+    // Notification banner: pick the first unread notif
+    const latestNotif=state.notifications.filter(n=>!n.read)[0];
+    const bannerHtml="";
+
+    return layout("student",`
+      ${bannerHtml}
+      <div class="match-header">
+        <h3>💼 งานที่แนะนำสำหรับคุณ</h3>
+        <p>จัดลำดับตามความเข้ากันกับทักษะของคุณ — คลิก Avatar ด้านบนเพื่อดูโปรไฟล์</p>
+      </div>
+      <div class="grid" style="gap:14px">
+        ${ranked.map((job,i)=>`
+          <div class="match-job-card">
+            <div class="rank-circle ${rankClass(i)}">#${i+1}</div>
+            <div>
+              <h3 style="margin:0 0 2px;font-size:15px;color:var(--navy)">${job.title}</h3>
+              <p class="small" style="margin:0 0 4px">${job.company} · 📍 ${job.location}</p>
+              <span class="match-score-badge">🎯 Match ${job.score}%</span>
+              <div class="match-tags-row">
+                ${job.matchedTags.map(t=>`<span class="match-tag-yes">✓ ${t}</span>`).join("")}
+                ${job.unmatchedTags.map(t=>`<span class="match-tag-no">${t}</span>`).join("")}
+              </div>
+            </div>
+            <div class="match-btn-col">
+              <button class="fav-btn ${isFav(job.id)?"active":""}" onclick="toggleFavorite('${job.id}',event)">${isFav(job.id)?"❤️":"🤍"}</button>
+              <button class="secondary" onclick="openJobDetail('${job.id}')">ดูรายละเอียด</button>
+              <button class="primary" onclick="openApplyForm('${job.id}')">สมัครงาน</button>
+            </div>
+          </div>
+        `).join("")}
+      </div>`);
+  }
+
+  // Favorites screen
+  if(sc==="favorites"){
+    const favJobs=jobsData.filter(j=>isFav(j.id));
+    return layout("student",`
+      <div class="match-header">
+        <h3>❤️ รายการโปรดของคุณ</h3>
+        <p>ประกาศงานที่คุณบันทึกไว้ (${favJobs.length} รายการ)</p>
+      </div>
+      ${favJobs.length===0?`<div style="text-align:center;padding:40px;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px">🤍</div><p>ยังไม่มีรายการโปรด กดหัวใจที่ประกาศงานเพื่อบันทึก</p></div>`:""}
+      <div class="grid" style="gap:14px">
+        ${favJobs.map(job=>`
+          <div class="match-job-card">
+            <div class="rank-circle rank-other">❤️</div>
+            <div>
+              <h3 style="margin:0 0 2px;font-size:15px;color:var(--navy)">${job.title}</h3>
+              <p class="small" style="margin:0 0 4px">${job.company} · 📍 ${job.location}</p>
+              <div class="tagbar" style="margin-top:6px">${job.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+            </div>
+            <div class="match-btn-col">
+              <button class="fav-btn active" onclick="toggleFavorite('${job.id}',event)">❤️ ลบออก</button>
+              <button class="secondary" onclick="openJobDetail('${job.id}')">ดูรายละเอียด</button>
+              <button class="primary" onclick="openApplyForm('${job.id}')">สมัครงาน</button>
+            </div>
+          </div>
+        `).join("")}
+      </div>`);
+  }
+
+  // Applications screen
+  if(sc==="applications"){
+    return layout("student",`
+      <div class="match-header">
+        <h3>📋 รายการสมัครงานของคุณ</h3>
+        <p>ติดตามสถานะการสมัครงานของคุณได้ที่นี่</p>
+      </div>
+      ${state.applications.length===0?`<div style="text-align:center;padding:40px;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px">📋</div><p>ยังไม่ได้สมัครงานใด</p></div>`:""}
+      <div class="grid" style="gap:14px">
+        ${state.applications.map(app=>{
+          const job=jobsData.find(j=>j.id===app.jobId);
+          if(!job)return"";
+          const chipClass=statusChipClass(app.status);
+          const statusIcon=app.status==="ผ่านการสมัคร"?"🎉":app.status==="ไม่ผ่านการสมัคร"?"❌":app.status==="อ่านแล้ว"?"📨":"📋";
+          return `
+            <div class="post-card" style="cursor:pointer" onclick="openAppliedJobDetail('${app.jobId}')">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <h3 style="margin:0 0 3px;color:var(--navy);font-size:15px">${job.title}</h3>
+                  <p class="small" style="margin:0">${job.company} · 📍 ${job.location}</p>
+                </div>
+                <span class="status-chip ${chipClass}">${statusIcon} ${statusLabel(app.status)}</span>
+              </div>
+              <div class="tagbar" style="margin-bottom:8px">${job.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+              <p style="font-size:12px;color:var(--muted);margin:0">สมัครเมื่อ: ${app.appliedAt} · คลิกเพื่อดูรายละเอียดและสถานะ</p>
+            </div>`;
+        }).join("")}
+      </div>`);
+  }
+
+  // Job Board (all jobs, like general view but with fav + apply)
+  if(sc==="jobboard"){
+    return layout("student",`
+      <div class="match-header">
+        <h3>🔍 ประกาศงานทั้งหมด</h3>
+        <p>รายการประกาศงานทั้งหมดในระบบ DEK INTERN</p>
+      </div>
+      <div class="grid" style="gap:14px">
+        ${jobsData.map(job=>`
+          <div class="gen-job-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+              <div>
+                <h3>${job.title}</h3>
+                <p class="small" style="margin:0">${job.company} · 📍 ${job.location}</p>
+              </div>
+              <button class="fav-btn ${isFav(job.id)?"active":""}" onclick="toggleFavorite('${job.id}',event)">${isFav(job.id)?"❤️":"🤍"}</button>
+            </div>
+            <div class="tagbar" style="margin-bottom:10px">${job.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+            <div style="display:flex;gap:8px">
+              <button class="secondary" style="flex:1" onclick="openJobDetail('${job.id}')">ดูรายละเอียด</button>
+              <button class="primary" style="flex:1" onclick="openApplyForm('${job.id}')">สมัครงาน</button>
+            </div>
+          </div>
+        `).join("")}
+      </div>`);
+  }
+}
+
+/* ========== Open applied job with status ========== */
+function openAppliedJobDetail(jobId){
+  const app=state.applications.find(a=>a.jobId===jobId);
+  const job=jobsData.find(j=>j.id===jobId);
+  if(!job||!app)return;
+  const d=job.detail;
+  const chipClass=statusChipClass(app.status);
+  const statusSteps=[
+    {label:"ส่งใบสมัคร",done:true},
+    {label:"สถานประกอบการอ่านแล้ว",done:app.status==="อ่านแล้ว"||app.status==="ผ่านการสมัคร"||app.status==="ไม่ผ่านการสมัคร"},
+    {label:"ผ่านการสมัคร",done:app.status==="ผ่านการสมัคร"},
+    {label:"ไม่ผ่านการสมัคร",done:app.status==="ไม่ผ่านการสมัคร"}
+  ];
+  const stepsHtml=`<div style="display:flex;gap:0;margin:14px 0;flex-wrap:wrap;gap:6px">
+    ${statusSteps.map(s=>`<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:800;${s.done?"background:#dcfce7;color:#15803d;border:1px solid #bbf7d0":"background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0"}">${s.done?"✅":"⬜"} ${s.label}</span>`).join("")}
+  </div>`;
+
+  document.getElementById("jobDetailContent").innerHTML=`
+    <div class="job-detail-header">
+      <p style="margin:0 0 6px;font-size:12px;color:#bfdbfe">📋 ประกาศรับสมัครงาน</p>
+      <h3 style="margin:0 0 4px;font-size:20px">${job.title}</h3>
+      <p style="margin:0 0 4px;font-size:13px;color:#bfdbfe">${job.dept}</p>
+      <p style="margin:0;font-size:12px;color:#93c5fd">🏢 ${job.company}</p>
+    </div>
+    <div style="background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:16px">
+      <p style="font-weight:800;color:var(--navy);margin:0 0 8px;font-size:14px">📊 สถานะการสมัครของคุณ</p>
+      <span class="status-chip ${chipClass}" style="font-size:13px;padding:6px 14px">${statusLabel(app.status)}</span>
+      ${stepsHtml}
+      <p style="font-size:12px;color:var(--muted);margin:0">สมัครเมื่อ: ${app.appliedAt}</p>
+    </div>
+    <div class="job-detail-section"><h4>📍 สถานที่ปฏิบัติงาน</h4><p>${d.locationFull}</p></div>
+    <div class="job-detail-section"><h4>💰 เงินเดือน</h4><span class="salary-badge">${job.salary}</span></div>
+    <div class="job-detail-section"><h4>🛠️ หน้าที่ความรับผิดชอบ</h4><ul>${d.responsibilities.map(r=>`<li>${r}</li>`).join("")}</ul></div>
+    <div class="job-detail-section"><h4>📞 ติดต่อ</h4><div class="contact-box"><p>👤 ${d.contact.name} · 📞 ${d.contact.phone} · 📧 ${d.contact.email}</p></div></div>
+    <div style="margin-top:16px"><button class="ghost" style="width:100%" onclick="closeModal('jobDetailModal')">ปิด</button></div>`;
+  openModal("jobDetailModal");
+}
+
+/* ========== Enterprise View ========== */
+function enterpriseView(){
+  const sc=state.screen.enterprise;
+
+  if(sc==="profile") return layout("enterprise",enterpriseProfilePage());
+
+  // My Posts list (default screen)
+  if(sc==="myPosts"){
+    if(state.showPostJobForm){
+      return layout("enterprise",renderPostJobForm());
+    }
+    const postsHtml=enterprisePostsData.map(ep=>{
+      const isSuc=ep.status==="สำเร็จ";
+      return `
+        <div class="post-card">
+          ${isSuc?`<span class="success-label">✅ สำเร็จ</span>`:""}
+          <div class="post-card-header">
+            <div>
+              <h3>${ep.title}</h3>
+              <p class="small" style="margin:4px 0 0">📅 โพสเมื่อ: ${ep.postedAt} · 👥 ผู้สมัคร: ${ep.applicants} คน</p>
+            </div>
+          </div>
+          <div class="tagbar" style="margin-bottom:10px">
+            <span class="badge ${isSuc?"success-badge":""}">${isSuc?"🎓 รับนักศึกษาแล้ว":"🟢 กำลังรับสมัคร"}</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="secondary" onclick="openJobDetail('${ep.jobId}')">👁️ ดูประกาศ</button>
+            <button class="primary" onclick="openSmartRanking('${ep.id}')">🏆 Smart Ranking</button>
+            <button class="ghost" onclick="openAllApplicants('${ep.id}')">👥 ผู้สมัครทั้งหมด</button>
+          </div>
+        </div>`;
+    }).join("");
+    return layout("enterprise",`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <div>
+          <h3 style="margin:0 0 3px;color:var(--navy)">📋 ประกาศงานของคุณ</h3>
+          <p class="small" style="margin:0">รายการประกาศงานทั้งหมดที่คุณโพสไว้</p>
+        </div>
+        <button class="primary" onclick="showPostJobFormFn()">+ โพสประกาศงาน</button>
+      </div>
+      <div class="grid" style="gap:14px">${postsHtml}</div>`);
+  }
+
+  // Smart Ranking screen (shown via sidebar)
+  if(sc==="ranking"){
+    return layout("enterprise",`
+      <div class="match-header">
+        <h3>🏆 Smart Ranking</h3>
+        <p>เลือกประกาศงานเพื่อดูนักศึกษาที่แนะนำ</p>
+      </div>
+      <div class="grid" style="gap:10px">
+        ${enterprisePostsData.map(ep=>`
+          <div style="border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;justify-content:space-between;align-items:center;background:white">
+            <div><strong style="color:var(--navy)">${ep.title}</strong><p class="small" style="margin:4px 0 0">👥 ${ep.applicants} ผู้สมัคร</p></div>
+            <button class="primary" onclick="openSmartRanking('${ep.id}')">🏆 ดู Smart Ranking</button>
+          </div>`).join("")}
+      </div>`);
+  }
+}
+
+function showPostJobFormFn(){state.showPostJobForm=true;render();}
+function hidePostJobFormFn(){state.showPostJobForm=false;render();}
+
+const postJobSkillOptions={
+  technical:["Python","JavaScript","HTML","CSS","SQL","React","Node.js","Java","C/C++","Git","TypeScript","PHP","MongoDB","Docker","UI/UX Design","Power BI","Excel","Machine Learning"],
+  soft:["การสื่อสาร","การทำงานเป็นทีม","การบริหารเวลา","การปรับตัว","ภาวะผู้นำ","การนำเสนอ","ควบคุมอารมณ์ได้ดี","มนุษยสัมพันธ์"],
+  cognitive:["การคิดวิเคราะห์","การแก้ปัญหา","การตัดสินใจ","การเรียนรู้เร็ว","การคิดเชิงระบบ","การวางแผน"]
+};
+let postJobSelectedSkills=new Set(["React","JavaScript","UI/UX Design"]);
+function togglePostSkill(skill){
+  if(postJobSelectedSkills.has(skill)){postJobSelectedSkills.delete(skill);}
+  else{postJobSelectedSkills.add(skill);}
+  renderSkillCheckboxes();
+}
+function renderSkillCheckboxes(){
+  const categories=[
+    {key:"technical",label:"Technical Skill",color:"#eff6ff",border:"#bfdbfe",text:"#1d4ed8"},
+    {key:"soft",label:"Soft Skill",color:"#f0fdf4",border:"#bbf7d0",text:"#15803d"},
+    {key:"cognitive",label:"Cognitive Skill",color:"#faf5ff",border:"#d8b4fe",text:"#7c3aed"}
+  ];
+  const el=document.getElementById("postJobSkillPicker");
+  if(!el)return;
+  el.innerHTML=categories.map(cat=>{
+    const opts=postJobSkillOptions[cat.key].map(opt=>{
+      const sel=postJobSelectedSkills.has(opt);
+      return `<button type="button" onclick="togglePostSkill('${opt}')" style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;border:1.5px solid ${sel?cat.border:"#d1d5db"};background:${sel?cat.color:"#f9fafb"};color:${sel?cat.text:"#9ca3af"};">${sel?"✓ ":"+"}${opt}</button>`;
+    }).join("");
+    return `<div style="margin-bottom:10px"><p style="font-size:12px;font-weight:800;color:#334155;margin:0 0 6px">${cat.label}</p><div style="display:flex;flex-wrap:wrap;gap:6px">${opts}</div></div>`;
+  }).join("");
+}
+function renderPostJobForm(){
+  setTimeout(()=>renderSkillCheckboxes(),0);
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="margin:0">📝 โพสประกาศงาน</h3>
+      <button class="ghost" onclick="hidePostJobFormFn()">← กลับรายการ</button>
+    </div>
+    <div class="grid two">
+      <div><label>ชื่อตำแหน่ง</label><input value="Frontend Developer Intern"></div>
+      <div><label>จำนวนรับ</label><input value="3"></div>
+    </div>
+    <label>แผนก/ฝ่าย</label><input value="Software Engineering">
+    <label>ทักษะที่ต้องการ</label>
+    <div id="postJobSkillPicker" style="border:1px solid #cbd5e1;border-radius:8px;padding:12px;background:#f8fafc;margin-bottom:4px"></div>
+    <p style="font-size:11px;color:var(--muted);margin:0 0 8px">คลิกเพื่อเลือก/ยกเลิก ทักษะที่ต้องการจากผู้สมัคร</p>
+    <label>รายละเอียดงาน</label><textarea>พัฒนาเว็บแอปพลิเคชัน ทำงานร่วมกับทีม Product และ Mentor</textarea>
+    <div class="grid two">
+      <div><label>เงินเดือน</label><input value="15,000 - 20,000 บาท"></div>
+      <div><label>สถานที่ทำงาน</label><input value="กรุงเทพฯ (Hybrid)"></div>
+    </div>
+    <label>เวลาทำงาน</label><input value="09:00-18:00 น. จ.-ศ.">
+    <label>คุณสมบัติผู้สมัคร</label><textarea>ปริญญาตรี CS หรือที่เกี่ยวข้อง&#10;มีความรู้ React/Vue.js&#10;สามารถทำงานเป็นทีมได้ดี</textarea>
+    <label>สวัสดิการ</label><input value="ประกันสุขภาพ, โบนัส, WFH Allowance">
+    <div class="actions">
+      <button class="primary" onclick="notify('📝 บันทึกประกาศงานแล้ว');hidePostJobFormFn()">บันทึกประกาศงาน</button>
+      <button class="ghost" onclick="hidePostJobFormFn()">ยกเลิก</button>
+    </div>
+  </div>`;
+}
+
+/* ========== Smart Ranking Modal ========== */
+function openAllApplicants(postId){
+  const post=enterprisePostsData.find(p=>p.id===postId);
+  if(!post)return;
+  const html=`<h2 style="margin:0 0 4px;color:var(--navy)">👥 ผู้สมัครทั้งหมด</h2>
+    <p class="modal-sub" style="margin-bottom:18px">ตำแหน่ง: <strong>${post.title}</strong> — แสดงรายชื่อผู้สมัครโดยไม่มีการจัดอันดับ</p>
+    ${smartStudents.map(s=>`<div class="sr-student-card">
+      <div class="sr-avatar">${s.initial}</div>
+      <div class="sr-info"><strong>${s.name}</strong><span>🏫 ${s.university} · ${s.major} · GPA ${s.gpa}</span><div class="tagbar" style="margin-top:6px">${s.skills.map(sk=>`<span class="tag">${sk}</span>`).join("")}</div></div>
+      <div class="sr-actions"><button class="secondary" onclick="openResumeModal('${s.id}')">📄 ดูประวัติส่วนตัว</button><button class="success" onclick="acceptStudent('${s.id}','${s.name}')">✅ รับเข้าฝึกงาน</button></div>
+    </div>`).join("")}
+    <p class="small" style="margin:14px 0 0">ตัวอย่างรายชื่อผู้สมัคร ${smartStudents.length} คน จากทั้งหมด ${post.applicants} คน</p>`;
+  document.getElementById("allApplicantsContent").innerHTML=html;
+  openModal("allApplicantsModal");
+}
+function openSmartRanking(postId){
+  const post=enterprisePostsData.find(p=>p.id===postId);
+  if(!post)return;
+  state.currentSmartRankPostId=postId;
+  const rankClass=i=>i===0?"rank-1":i===1?"rank-2":i===2?"rank-3":"rank-other";
+  const html=`
+    <h2 style="margin:0 0 4px;color:var(--navy)">🏆 Smart Ranking</h2>
+    <p class="modal-sub" style="margin-bottom:18px">ตำแหน่ง: <strong>${post.title}</strong> — นักศึกษาที่แนะนำโดย AI</p>
+    ${smartStudents.map((s,i)=>`
+      <div class="sr-student-card">
+        <div style="position:relative">
+          <div class="sr-avatar">${s.initial}</div>
+          <div class="rank-circle ${rankClass(i)}" style="width:22px;height:22px;font-size:11px;position:absolute;top:-6px;right:-6px">#${i+1}</div>
+        </div>
+        <div class="sr-info">
+          <strong>${s.name}</strong>
+          <span>🏫 ${s.university} · ${s.major} · GPA ${s.gpa}</span>
+          <div class="tagbar" style="margin-top:6px">${s.skills.map(sk=>`<span class="tag">${sk}</span>`).join("")}</div>
+          <span class="match-score-badge" style="margin-top:6px">🎯 Match ${s.score}%</span>
+        </div>
+        <div class="sr-actions">
+          <button class="secondary" onclick="openResumeModal('${s.id}')">📄 อ่าน Resume</button>
+          <button class="success" onclick="acceptStudent('${s.id}','${s.name}')">✅ รับเข้าฝึกงาน</button>
+        </div>
+      </div>
+    `).join("")}
+  `;
+  document.getElementById("smartRankingContent").innerHTML=html;
+  openModal("smartRankingModal");
+}
+function acceptStudent(sId,sName){
+  notify(`🎉 รับ ${sName} เข้าฝึกงานเรียบร้อยแล้ว!`);
+  closeModal("smartRankingModal");
+  closeModal("allApplicantsModal");
+}
+
+/* ========== Resume Modal ========== */
+function openResumeModal(sId){
+  const s=smartStudents.find(x=>x.id===sId);
+  if(!s)return;
+  document.getElementById("resumeContent").innerHTML=`
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+      <div class="sr-avatar" style="width:60px;height:60px;font-size:22px">${s.initial}</div>
+      <div>
+        <h2 style="margin:0 0 3px;color:var(--navy)">${s.name}</h2>
+        <p style="margin:0;font-size:13px;color:var(--muted)">🏫 ${s.university} · ${s.major} · GPA ${s.gpa}</p>
+      </div>
+    </div>
+    <div class="job-detail-section">
+      <h4>🎯 ทักษะ</h4>
+      <div class="skill-badges-wrap">${s.skills.map(sk=>`<span class="skill-badge verified">✓ ${sk}</span>`).join("")}</div>
+    </div>
+    <div class="job-detail-section">
+      <h4>🎓 การศึกษา</h4>
+      <p><strong>${s.university}</strong> · สาขา ${s.major}</p>
+      <p>เกรดเฉลี่ยสะสม (GPA): <strong>${s.gpa}</strong></p>
+    </div>
+
+    <div class="job-detail-section">
+      <h4>🏆 รางวัลและกิจกรรม</h4>
+      <p>• แข่งขัน Hackathon ระดับประเทศ — ได้รับรางวัลที่ 2</p>
+      <p>• อาสาสมัครสอนคอมพิวเตอร์ชุมชน</p>
+    </div>
+
+    <a href="${s.id}.pdf"
+       target="_blank"
+       style="
+            color:#1d4ed8;
+            text-decoration:none;
+            font-weight:600;
+       ">
+      📄 เปิดไฟล์ Resume (PDF)
+    </a>
+
+    <div class="actions">
+      <button class="success" style="flex:1" onclick="acceptStudent('${s.id}','${s.name}');closeModal('resumeModal')">✅ รับเข้าฝึกงาน</button>
+      <button class="ghost" onclick="closeModal('resumeModal')">ปิด</button>
+    </div>`;
+  openModal("resumeModal");
+}
+
+/* ========== Institution View ========== */
+function institutionProfilePage(){
+  const editing=state.institutionProfileEditing;
+  return `<div class="card" style="max-width:760px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px">
+      <div><h3>👤 ประวัติส่วนตัวอาจารย์</h3><p class="small" style="margin:0">ข้อมูลผู้ดูแลการฝึกงานของสถาบันการศึกษา</p></div>
+      <button class="${editing?"ghost":"primary"}" onclick="state.institutionProfileEditing=!state.institutionProfileEditing;render()">${editing?"ยกเลิก":"✏️ แก้ไขข้อมูล"}</button>
+    </div>
+    ${editing?`<div class="profile-edit-grid">
+      <div><label>ชื่อ</label><input value="ดร.กานดา"></div><div><label>นามสกุล</label><input value="สมชาย"></div>
+      <div><label>รหัสประจำตัวอาจารย์</label><input value="T-ENG-0248"></div><div><label>ตำแหน่ง</label><input value="อาจารย์ประจำภาควิชา"></div>
+      <div><label>คณะ/ภาควิชา</label><input value="วิศวกรรมศาสตร์ / วิศวกรรมคอมพิวเตอร์"></div><div><label>เบอร์โทรศัพท์</label><input value="02-123-4567 ต่อ 204"></div>
+    </div><div class="profile-edit-full"><label>อีเมล</label><input type="email" value="kanda.s@university.ac.th"></div>
+    <div class="actions"><button class="primary" onclick="state.institutionProfileEditing=false;notify('บันทึกข้อมูลส่วนตัวอาจารย์แล้ว');render()">บันทึกการแก้ไข</button></div>`:
+    `<div class="profile-fields-grid">
+      <div class="profile-field-box"><p class="profile-field-label">ชื่อ-นามสกุล</p><p class="profile-field-value">ดร.กานดา สมชาย</p></div>
+      <div class="profile-field-box"><p class="profile-field-label">รหัสประจำตัว</p><p class="profile-field-value">T-ENG-0248</p></div>
+      <div class="profile-field-box"><p class="profile-field-label">ตำแหน่ง</p><p class="profile-field-value">อาจารย์ประจำภาควิชา</p></div>
+      <div class="profile-field-box"><p class="profile-field-label">คณะ / ภาควิชา</p><p class="profile-field-value">วิศวกรรมศาสตร์ / วิศวกรรมคอมพิวเตอร์</p></div>
+      <div class="profile-field-box"><p class="profile-field-label">อีเมล</p><p class="profile-field-value">kanda.s@university.ac.th</p></div>
+      <div class="profile-field-box"><p class="profile-field-label">เบอร์โทรศัพท์</p><p class="profile-field-value">02-123-4567 ต่อ 204</p></div>
+    </div>`}
+  </div>`;
+}
+const institutionStatusStudents={
+  accepted:[
+    {name:"Kanda Somchai",id:"65123401",company:"Future Digital Co., Ltd.",position:"Frontend Developer Intern"},
+    {name:"Narin Phan",id:"65123418",company:"AutoParts Tech Co., Ltd.",position:"Measurement Engineer Intern"}
+  ],
+  notAccepted:[
+    {name:"Pimchanok Saelim",id:"65123427",company:"-",position:"กำลังหาสถานประกอบการ"},
+    {name:"Thanawat Chaiyo",id:"65123436",company:"-",position:"กำลังหาสถานประกอบการ"}
+  ],
+  interview:[
+    {name:"Chanon Wattanakul",id:"65123445",company:"Digital Solutions Co., Ltd.",position:"Full-Stack Developer Intern"},
+    {name:"Sirinapa Kittikul",id:"65123452",company:"Future Digital Co., Ltd.",position:"UX/UI Designer Intern"}
+  ]
+};
+const institutionVerifyRequests=[
+  {id:"req1",name:"Kanda Somchai",studentId:"65123401",skill:"Programming",detail:"ขอรับรองทักษะการพัฒนาเว็บแอปพลิเคชันด้วย React และ JavaScript",evidence:"Senior project repository, Web App assignment, Git activity"},
+  {id:"req2",name:"Narin Phan",studentId:"65123418",skill:"Language",detail:"ขอรับรองทักษะภาษาอังกฤษเพื่อการสื่อสารและนำเสนอผลงาน",evidence:"Presentation rubric, English course certificate"}
+];
+function openInstitutionStatus(status){
+  const titles={accepted:"นักศึกษาที่ได้รับเข้าฝึกงาน",notAccepted:"นักศึกษาที่ยังไม่ได้รับเข้าฝึกงาน",interview:"นักศึกษาที่รอสัมภาษณ์"};
+  const students=institutionStatusStudents[status]||[];
+  document.getElementById("institutionDetailContent").innerHTML=`<h2>${titles[status]}</h2><p class="modal-sub">รายชื่อนักศึกษาและรายละเอียดสถานที่ฝึกงาน</p>
+    <div class="grid">${students.map(s=>`<article class="student-row"><div><h3>${s.name}</h3><p class="small" style="margin:0 0 3px">รหัสนักศึกษา: <strong>${s.id}</strong></p><p class="small" style="margin:0">สถานประกอบการ: <strong>${s.company}</strong> · ตำแหน่ง: <strong>${s.position}</strong></p></div></article>`).join("")}</div>`;
+  openModal("institutionDetailModal");
+}
+function openInstitutionVerifyDetail(requestId){
+  const request=institutionVerifyRequests.find(item=>item.id===requestId); if(!request)return;
+  document.getElementById("institutionDetailContent").innerHTML=`<h2>รายละเอียดคำขออนุมัติทักษะ</h2><p class="modal-sub">ตรวจสอบข้อมูลนักศึกษาและหลักฐานก่อนอนุมัติ</p>
+    <div class="profile-fields-grid"><div class="profile-field-box"><p class="profile-field-label">ชื่อนักศึกษา</p><p class="profile-field-value">${request.name}</p></div><div class="profile-field-box"><p class="profile-field-label">รหัสนักศึกษา</p><p class="profile-field-value">${request.studentId}</p></div><div class="profile-field-box"><p class="profile-field-label">ทักษะที่ขออนุมัติ</p><p class="profile-field-value">${request.skill}</p></div><div class="profile-field-box"><p class="profile-field-label">สถานะ</p><p class="profile-field-value">รอตรวจสอบ</p></div></div>
+    <div class="job-detail-section"><h4>รายละเอียดคำขอ</h4><p>${request.detail}</p></div><div class="job-detail-section"><h4>หลักฐานประกอบ</h4><p>${request.evidence}</p></div>
+    <div class="actions"><button class="success" onclick="closeModal('institutionDetailModal');notify('อนุมัติทักษะ ${request.skill} ให้ ${request.name} แล้ว')">อนุมัติ</button><button class="danger" onclick="closeModal('institutionDetailModal');notify('ปัดตกคำขอ Verify แล้ว')">ปัดตก</button></div>`;
+  openModal("institutionDetailModal");
+}
+function institutionView(){
+  if(state.screen.institution==="profile") return layout("institution",institutionProfilePage());
+  const metrics=[
+    {key:"accepted",count:42,label:"นักศึกษาที่ได้รับเข้าฝึกงาน",width:"70%",color:"var(--green)"},
+    {key:"notAccepted",count:18,label:"นักศึกษาที่ยังไม่ได้รับเข้าฝึกงาน",width:"30%",color:"var(--amber)"},
+    {key:"interview",count:7,label:"นักศึกษาที่รอสัมภาษณ์",width:"12%",color:"#7c3aed"}
+  ];
+  return layout("institution",`<div class="match-header"><h3>Dashboard</h3><p>ภาพรวมสถานะนักศึกษาฝึกงานและคำขอยืนยันทักษะ</p></div>
+    <div class="grid three" style="margin-bottom:22px">${metrics.map(m=>`<button class="metric dashboard-metric" onclick="openInstitutionStatus('${m.key}')" title="ดูรายชื่อนักศึกษา"><strong>${m.count}</strong><span>${m.label}</span><div class="bar"><span style="width:${m.width};background:${m.color}"></span></div><p class="small" style="margin:8px 0 0">คลิกเพื่อดูรายชื่อ</p></button>`).join("")}</div>
+    <div><h3 style="margin:0 0 10px;color:var(--navy)">คำขออนุมัติทักษะ (Skill Verification)</h3><p class="small" style="margin:0 0 14px">รายชื่อนักศึกษาที่ส่งคำขอให้สถาบันตรวจสอบทักษะ</p>
+      <div class="grid">${institutionVerifyRequests.map(request=>`<article class="verify-row"><div><h3>${request.name} ขอ Verify: ${request.skill}</h3><p class="small">รหัสนักศึกษา: ${request.studentId} · หลักฐาน: ${request.evidence}</p><span class="badge">${request.id==="req1"?(state.pendingSkill?"Pending":"Processed"):"Pending"}</span></div><div class="actions"><button class="secondary" onclick="openInstitutionVerifyDetail('${request.id}')">ดูรายละเอียด</button><button class="success" onclick="state.pendingSkill=false;notify('อนุมัติ Verified Badge ให้ ${request.skill} แล้ว');render()">อนุมัติ</button><button class="danger" onclick="state.pendingSkill=false;notify('ปัดตกคำขอ Verify แล้ว');render()">ปัดตก</button></div></article>`).join("")}</div>
+    </div>`);
+}
+
+/* ========== Admin View ========== */
+function adminProfilePage(){
+  const p=state.adminProfile, editing=state.adminProfileEditing;
+  const field=(label,key)=>`<div><label>${label}</label><input id="apf-${key}" value="${p[key]}"></div>`;
+  const fields=editing?`<div class="profile-edit-grid">${field("ชื่อ-นามสกุล","name")}${field("รหัสผู้ดูแลระบบ","adminId")}${field("ตำแหน่ง","position")}${field("หน่วยงาน","department")}${field("เบอร์โทรศัพท์","phone")}${field("อีเมล","email")}${field("LINE","line")}${field("ที่อยู่","address")}</div>`:
+  `<div class="profile-fields-grid">${[["ชื่อ-นามสกุล","name"],["รหัสผู้ดูแลระบบ","adminId"],["ตำแหน่ง","position"],["หน่วยงาน","department"],["เบอร์โทรศัพท์","phone"],["อีเมล","email"],["LINE","line"],["ที่อยู่","address"]].map(([label,key])=>`<div class="profile-field-box"><p class="profile-field-label">${label}</p><p class="profile-field-value">${p[key]}</p></div>`).join("")}</div>`;
+  return `<div class="card" style="max-width:760px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px"><div><h3>👤 ประวัติส่วนตัวผู้ดูแลระบบ</h3><p class="small" style="margin:0">ข้อมูลบัญชีและช่องทางติดต่อของผู้ดูแลระบบ</p></div><button class="${editing?"ghost":"primary"}" onclick="toggleAdminProfileEdit()">${editing?"ยกเลิก":"✏️ แก้ไขข้อมูล"}</button></div>${fields}${editing?`<div class="actions"><button class="success" onclick="saveAdminProfile()">บันทึกการแก้ไข</button><button class="ghost" onclick="toggleAdminProfileEdit()">ยกเลิก</button></div>`:""}</div>`;
+}
+function toggleAdminProfileEdit(){state.adminProfileEditing=!state.adminProfileEditing;render();}
+function saveAdminProfile(){["name","adminId","position","department","phone","email","line","address"].forEach(k=>state.adminProfile[k]=document.getElementById(`apf-${k}`).value);state.adminProfileEditing=false;notify("บันทึกประวัติส่วนตัวผู้ดูแลระบบแล้ว");render();}
+function approvalStatus(status){return status==="approved"?"อนุมัติแล้ว":status==="rejected"?"ไม่อนุมัติ":"รออนุมัติ";}
+function openPostReports(id){
+  const post=adminReportedPosts.find(x=>x.id===id); if(!post)return;
+  document.getElementById("adminReportsContent").innerHTML=`<h2>รายงานจากนักศึกษา</h2><p class="modal-sub">${post.title} · ทั้งหมด ${post.reports.length} รายงาน</p><div class="grid">${post.reports.map((report,index)=>`<article class="student-row"><div><h3>${index+1}. ${report.name}</h3><p class="small" style="margin:0 0 6px">รหัสนักศึกษา: <strong>${report.studentId}</strong></p><p style="margin:0;color:var(--ink)"><strong>สาเหตุที่รายงาน:</strong> ${report.reason}</p></div></article>`).join("")}</div><div class="actions"><button class="ghost" onclick="closeModal('adminReportsModal')">ปิด</button></div>`;
+  openModal("adminReportsModal");
+}
+function openAdminDetail(type,id){
+  const source=type==="enterprise"?adminEnterprises:type==="teacher"?adminTeachers:adminReportedPosts;
+  const item=source.find(x=>x.id===id); if(!item)return;
+  let title="", fields=[], extra="", actions="";
+  if(type==="enterprise"){
+    title=`รายละเอียดสถานประกอบการ: ${item.company}`;
+    fields=[["ชื่อบริษัท",item.company],["เลขทะเบียนนิติบุคคล",item.registration],["ผู้ประสานงาน",item.representative],["อีเมล",item.email],["โทรศัพท์",item.phone],["ประเภทธุรกิจ",item.business],["วันที่ยื่น",item.submitted],["สถานะ",approvalStatus(item.status)]];
+    extra=`<div class="job-detail-section"><h4>ที่อยู่บริษัท</h4><p>${item.address}</p></div><div class="job-detail-section"><h4>เอกสารที่แนบ</h4><p>${item.documents}</p></div>`;
+    actions=item.status==="pending"?`<button class="success" onclick="approveAdminRequest('enterprise','${id}')">อนุมัติ</button><button class="danger" onclick="openAdminReject('enterprise','${id}')">ไม่อนุมัติ</button>`:"";
+  } else if(type==="teacher"){
+    title=`รายละเอียดอาจารย์: ${item.name}`;
+    fields=[["ชื่อ-นามสกุล",item.name],["รหัสอาจารย์",item.teacherId],["มหาวิทยาลัย",item.university],["คณะ",item.faculty],["หลักสูตร",item.program],["ตำแหน่ง",item.position],["อีเมล",item.email],["โทรศัพท์",item.phone],["วันที่ยื่น",item.submitted],["สถานะ",approvalStatus(item.status)]];
+    extra=`<div class="job-detail-section"><h4>เอกสารยืนยันตัวตน</h4><p>${item.evidence}</p><a href="${item.evidencePdf}" target="_blank" style="color:#1d4ed8;text-decoration:none;font-weight:700">📄 เปิดเอกสารยืนยันตัวตน (PDF)</a></div>`;
+    actions=item.status==="pending"?`<button class="success" onclick="approveAdminRequest('teacher','${id}')">อนุมัติ</button><button class="danger" onclick="openAdminReject('teacher','${id}')">ไม่อนุมัติ</button>`:"";
+  } else {
+    title=`รายละเอียดโพสต์ที่ถูกรายงาน`;
+    fields=[["สถานประกอบการ",item.company],["ตำแหน่ง",item.position],["สถานที่ทำงาน",item.location],["เบี้ยเลี้ยง/ค่าตอบแทน",item.allowance],["เวลาทำงาน",item.workHours],["จำนวนรายงาน",`<button class="secondary" onclick="openPostReports('${id}')">${item.reports.length} รายงาน · ดูรายงาน</button>`],["วันที่รายงาน",item.submitted],["สถานะ",item.status==="removed"?"ลบโพสต์แล้ว":item.status==="kept"?"ไม่ลบโพสต์":"รอตรวจสอบ"]];
+    extra=`<div class="job-detail-header"><h2 style="margin:0 0 5px">${item.title}</h2><p style="margin:0;color:#dbeafe">${item.company} · ${item.position}</p></div><div class="job-detail-section"><h4>รายละเอียดประกาศ</h4><p>${item.content}</p></div><div class="job-detail-section"><h4>หน้าที่ความรับผิดชอบ</h4><ul>${item.responsibilities.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="job-detail-section"><h4>คุณสมบัติผู้สมัคร</h4><ul>${item.requirements.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="job-detail-section"><h4>สวัสดิการและสิทธิประโยชน์</h4><ul>${item.benefits.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="contact-box"><strong>ช่องทางติดต่อ:</strong> ${item.contact}</div><div class="job-detail-section" style="margin-top:16px"><h4>เหตุผลสรุปที่ได้รับรายงาน</h4><p>${item.reportedReason}</p><button class="secondary" onclick="openPostReports('${id}')">ดูรายงานจากนักศึกษาทั้งหมด (${item.reports.length})</button></div>`;
+    actions=item.status==="reported"?`<button class="danger" onclick="moderatePost('${id}','removed')">ลบโพสต์</button><button class="secondary" onclick="moderatePost('${id}','kept')">ไม่ลบโพสต์</button>`:"";
+  }
+  document.getElementById("adminDetailContent").innerHTML=`<h2>${title}</h2><p class="modal-sub">ตรวจสอบข้อมูลก่อนดำเนินการ</p><div class="profile-fields-grid">${fields.map(([l,v])=>`<div class="profile-field-box"><p class="profile-field-label">${l}</p><p class="profile-field-value">${v}</p></div>`).join("")}</div>${extra}<div class="actions">${actions}<button class="ghost" onclick="closeModal('adminDetailModal')">ปิด</button></div>`;
+  openModal("adminDetailModal");
+}
+function approveAdminRequest(type,id){const list=type==="enterprise"?adminEnterprises:adminTeachers,item=list.find(x=>x.id===id);if(!item)return;item.status="approved";closeModal("adminDetailModal");notify(`อนุมัติ${type==="enterprise"?"สถานประกอบการ":"อาจารย์"}แล้ว`);render();}
+function openAdminReject(type,id){const list=type==="enterprise"?adminEnterprises:adminTeachers,item=list.find(x=>x.id===id);if(!item)return;state.adminRejecting={type,id};document.getElementById("adminRejectTarget").textContent=`คำขอของ ${item.company||item.name}`;document.getElementById("adminRejectReason").value="";closeModal("adminDetailModal");openModal("adminRejectModal");}
+function submitAdminReject(){const reason=document.getElementById("adminRejectReason").value.trim(), target=state.adminRejecting;if(!reason){notify("กรุณาระบุเหตุผลที่ไม่อนุมัติ");return;}const list=target.type==="enterprise"?adminEnterprises:adminTeachers,item=list.find(x=>x.id===target.id);item.status="rejected";item.rejectionReason=reason;state.adminRejecting=null;closeModal("adminRejectModal");notify("บันทึกการไม่อนุมัติพร้อมเหตุผลแล้ว");render();}
+function moderatePost(id,status){const post=adminReportedPosts.find(x=>x.id===id);if(!post)return;post.status=status;closeModal("adminDetailModal");notify(status==="removed"?"ลบโพสต์ออกจากระบบแล้ว":"ยืนยันว่าไม่ลบโพสต์แล้ว");render();}
+function approvalRow(type,item,title,description){return `<article class="enterprise-row"><div><h3>${title}</h3><p class="small">${description}</p><span class="badge">${approvalStatus(item.status)}</span>${item.rejectionReason?`<p class="small" style="margin:7px 0 0;color:#b91c1c">เหตุผล: ${item.rejectionReason}</p>`:""}</div><div class="admin-actions"><button class="secondary" onclick="openAdminDetail('${type}','${item.id}')">ดูรายละเอียด</button>${item.status==="pending"?`<button class="success" onclick="approveAdminRequest('${type}','${item.id}')">อนุมัติ</button><button class="danger" onclick="openAdminReject('${type}','${item.id}')">ไม่อนุมัติ</button>`:""}</div></article>`;}
+function adminView(){
+  const sc=state.screen.admin;
+  if(sc==="dashboard")return layout("admin",`<div class="grid three"><div class="metric"><strong>1,248</strong><span>ผู้ใช้งานทั้งหมด</span></div><div class="metric"><strong>312</strong><span>ประกาศงาน</span></div><div class="metric"><strong>76</strong><span>คำขอรออนุมัติ</span></div></div><div class="grid two" style="margin-top:14px"><div class="card"><h3>สถิติการสมัครงาน</h3><div class="bar"><span style="width:78%"></span></div><p class="small">Applications 78%</p></div><div class="card"><h3>สถิติการ Verify Skill</h3><div class="bar"><span style="width:64%"></span></div><p class="small">Verified skill requests 64%</p></div></div>`);
+  if(sc==="profile")return layout("admin",adminProfilePage());
+  if(sc==="enterprise")return layout("admin",`<div class="admin-section"><div class="admin-section-head"><div><h3>การรออนุมัติสำหรับองค์กร</h3><p class="small" style="margin:4px 0 0">ตรวจสอบรายชื่อบริษัทและเอกสารประกอบก่อนอนุมัติ</p></div><span class="badge">${adminEnterprises.filter(x=>x.status==="pending").length} รายการรออนุมัติ</span></div><div class="grid">${adminEnterprises.map(x=>approvalRow("enterprise",x,x.company,`เลขทะเบียน ${x.registration} · ยื่นเมื่อ ${x.submitted}`)).join("")}</div></div><div class="admin-section"><div class="admin-section-head"><div><h3>การรออนุมัติสำหรับอาจารย์</h3><p class="small" style="margin:4px 0 0">ตรวจสอบข้อมูลอาจารย์ มหาวิทยาลัย และหลักสูตร</p></div><span class="badge">${adminTeachers.filter(x=>x.status==="pending").length} รายการรออนุมัติ</span></div><div class="grid">${adminTeachers.map(x=>approvalRow("teacher",x,x.name,`${x.teacherId} · ${x.university} · ${x.program}`)).join("")}</div></div>`);
+  return layout("admin",`<div class="admin-section-head"><div><h3>โพสต์ประกาศที่ถูกรายงาน</h3><p class="small" style="margin:4px 0 0">เปิดดูเนื้อหาประกาศและเหตุผลการรายงานก่อนตัดสินใจ</p></div><span class="badge">${adminReportedPosts.filter(x=>x.status==="reported").length} รายการรอตรวจสอบ</span></div><div class="grid">${adminReportedPosts.map(p=>`<article class="post-row"><div><h3 style="color:white">${p.title}</h3><p class="small">${p.company} · ถูกรายงาน ${p.reports.length} ครั้ง</p><span class="badge">${p.status==="removed"?"ลบโพสต์แล้ว":p.status==="kept"?"ไม่ลบโพสต์":"Reported"}</span></div><div class="admin-actions"><button class="secondary" onclick="openAdminDetail('post','${p.id}')">ตรวจสอบโพสต์</button>${p.status==="reported"?`<button class="danger" onclick="moderatePost('${p.id}','removed')">ลบโพสต์</button><button class="success" onclick="moderatePost('${p.id}','kept')">ไม่ลบโพสต์</button>`:""}</div></article>`).join("")}</div>`);
+}
+
+/* ========== Render ========== */
+function render(){
+  renderTopbar();
+  const app=document.getElementById("app");
+  if(state.role==="general"){app.innerHTML=generalView();return;}
+  if(!state.loggedIn[state.role]){state.role="general";renderTopbar();app.innerHTML=generalView();return;}
+  if(state.role==="student")app.innerHTML=studentView();
+  else if(state.role==="enterprise")app.innerHTML=enterpriseView();
+  else if(state.role==="institution")app.innerHTML=institutionView();
+  else if(state.role==="admin")app.innerHTML=adminView();
+}
+render();
+</script>
+</body>
+</html>
