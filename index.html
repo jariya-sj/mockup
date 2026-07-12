@@ -348,7 +348,7 @@
 <div class="modal-overlay hidden" id="notifModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('notifModal')">&times;</button>
-    <h2>📬 กล่องข้อความ</h2>
+    <h2>กล่องข้อความ</h2>
     <p class="modal-sub">ประกาศงานใหม่และการแจ้งเตือนสำหรับคุณ</p>
     <div id="notifListContent"></div>
   </div>
@@ -405,7 +405,7 @@
 <!-- Skill Picker Modal (post-registration for students) -->
 <div class="modal-overlay hidden" id="skillPickerModal">
   <div class="modal-box wide">
-    <h2>🎯 เลือกทักษะของคุณ</h2>
+    <h2>เลือกทักษะของคุณ</h2>
     <p class="modal-sub">เลือกทักษะที่คุณมีเพื่อให้ระบบแนะนำงานที่เหมาะกับคุณได้ดียิ่งขึ้น</p>
     <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
       <div>
@@ -605,7 +605,7 @@ function statusLabel(s){return s||"รอการตรวจสอบ";}
 function renderTopbar(){
   const el=document.getElementById("topbarActions");
   if(state.role==="general"){
-    el.innerHTML=`<button class="btn-login" id="btn-login-topbar" onclick="openLoginModal()">🔑 เข้าสู่ระบบ</button><button class="btn-register" id="btn-register-topbar" onclick="openRegisterModal()">สมัครสมาชิก</button>`;
+    el.innerHTML=`<button class="btn-login" id="btn-login-topbar" onclick="openLoginModal()">เข้าสู่ระบบ</button><button class="btn-register" id="btn-register-topbar" onclick="openRegisterModal()">สมัครสมาชิก</button>`;
   }else{
     const isStudent=state.role==="student";
     const hasProfile=state.role==="student"||state.role==="enterprise";
@@ -637,7 +637,7 @@ function selectLoginRole(rid){
     </p>
     <label>อีเมล</label><input type="email" id="loginEmail" value="${rid}@demo.local">
     <label>รหัสผ่าน</label><input type="password" id="loginPassword" value="password">
-    <div class="actions"><button class="primary" style="flex:1" id="btn-do-login" onclick="doLogin()">🔑 เข้าสู่ระบบ</button><button class="ghost" onclick="closeModal('loginModal')">ยกเลิก</button></div>`;
+    <div class="actions"><button class="primary" style="flex:1" id="btn-do-login" onclick="doLogin()">เข้าสู่ระบบ</button><button class="ghost" onclick="closeModal('loginModal')">ยกเลิก</button></div>`;
 }
 function resetLoginRole(){
   state.selectedLoginRole=null;
@@ -794,7 +794,7 @@ function openJobDetail(jobId){
   const favHtml=state.role==="student"?`<button class="fav-btn ${isFaved?"active":""}" onclick="toggleFavAndRefreshModal('${jobId}')">${isFaved?"❤️ บันทึกแล้ว":"🤍 บันทึกรายการโปรด"}</button>`:"";
   document.getElementById("jobDetailContent").innerHTML=`
     <div class="job-detail-header">
-      <p style="margin:0 0 6px;font-size:12px;color:#bfdbfe">📋 ประกาศรับสมัครงาน | 📌 ตำแหน่งงาน</p>
+      <p style="margin:0 0 6px;font-size:12px;color:#bfdbfe">ประกาศรับสมัครงาน | ตำแหน่งงาน</p>
       <h3 style="margin:0 0 4px;font-size:20px">${job.title}</h3>
       <p style="margin:0 0 4px;font-size:13px;color:#bfdbfe">${job.dept}</p>
       <p style="margin:0;font-size:12px;color:#93c5fd">🏢 ${job.company}</p>
@@ -962,7 +962,7 @@ function studentProfilePage(){
   const s=state.studentProfile;
   const fields=studentPageEditMode?`<div class="profile-edit-grid"><div><label>ชื่อ-นามสกุล</label><input id="spf-name" value="${s.name}"></div><div><label>รหัสนักศึกษา</label><input id="spf-id" value="${s.studentId}"></div><div><label>มหาวิทยาลัย</label><input id="spf-univ" value="${s.university}"></div><div><label>สาขาวิชา</label><input id="spf-major" value="${s.major}"></div><div><label>GPA</label><input id="spf-gpa" value="${s.gpa}"></div></div>`
     :`<div class="profile-fields-grid"><div class="profile-field-box"><p class="profile-field-label">ชื่อ-นามสกุล</p><p class="profile-field-value">${s.name}</p></div><div class="profile-field-box"><p class="profile-field-label">รหัสนักศึกษา</p><p class="profile-field-value">${s.studentId}</p></div><div class="profile-field-box"><p class="profile-field-label">มหาวิทยาลัย</p><p class="profile-field-value">${s.university}</p></div><div class="profile-field-box"><p class="profile-field-label">สาขาวิชา</p><p class="profile-field-value">${s.major}</p></div><div class="profile-field-box"><p class="profile-field-label">GPA</p><p class="profile-field-value">${s.gpa}</p></div></div>`;
-  return `<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>👤 ข้อมูลส่วนตัว</h3><p class="small">ประวัติส่วนตัวและทักษะของนักศึกษา</p></div>${studentPageEditMode?`<div class="actions" style="margin:0"><button class="success" onclick="saveStudentProfilePage()">💾 บันทึก</button><button class="ghost" onclick="studentPageEditMode=false;render()">ยกเลิก</button></div>`:`<button class="secondary" onclick="studentPageEditMode=true;render()">แก้ไขข้อมูล</button>`}</div>${fields}<div style="margin-top:18px"><p class="skills-section-title">🎯 ทักษะ (Skills)</p>${skillGroupsHtml(studentPageEditMode)}</div></div>`;
+  return `<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>ข้อมูลส่วนตัว</h3><p class="small">ประวัติส่วนตัวและทักษะของนักศึกษา</p></div>${studentPageEditMode?`<div class="actions" style="margin:0"><button class="success" onclick="saveStudentProfilePage()">บันทึก</button><button class="ghost" onclick="studentPageEditMode=false;render()">ยกเลิก</button></div>`:`<button class="secondary" onclick="studentPageEditMode=true;render()">แก้ไขข้อมูล</button>`}</div>${fields}<div style="margin-top:18px"><p class="skills-section-title">ทักษะ (Skills)</p>${skillGroupsHtml(studentPageEditMode)}</div></div>`;
 }
 function saveStudentProfilePage(){
   state.studentProfile={name:document.getElementById("spf-name").value||state.studentProfile.name,studentId:document.getElementById("spf-id").value||state.studentProfile.studentId,university:document.getElementById("spf-univ").value||state.studentProfile.university,major:document.getElementById("spf-major").value||state.studentProfile.major,gpa:document.getElementById("spf-gpa").value||state.studentProfile.gpa};
@@ -975,7 +975,7 @@ function enterpriseProfilePage(){
   const e=state.enterpriseProfile;
   const fields=enterprisePageEditMode?`<div class="profile-edit-grid"><div><label>ชื่อบริษัท</label><input id="epf-company" value="${e.company}"></div><div><label>ชื่อ-นามสกุล</label><input id="epf-name" value="${e.name}"></div><div><label>รหัสพนักงาน</label><input id="epf-id" value="${e.employeeId}"></div><div><label>ตำแหน่ง</label><input id="epf-position" value="${e.position}"></div><div><label>แผนก</label><input id="epf-department" value="${e.department}"></div><div><label>เบอร์โทรศัพท์</label><input id="epf-phone" value="${e.phone}"></div><div><label>อีเมล</label><input id="epf-email" value="${e.email}"></div><div><label>ที่อยู่บริษัท</label><input id="epf-address" value="${e.address}"></div></div>`
   :`<div class="profile-fields-grid"><div class="profile-field-box"><p class="profile-field-label">ชื่อบริษัท</p><p class="profile-field-value">${e.company}</p></div><div class="profile-field-box"><p class="profile-field-label">ชื่อ-นามสกุล</p><p class="profile-field-value">${e.name}</p></div><div class="profile-field-box"><p class="profile-field-label">รหัสพนักงาน</p><p class="profile-field-value">${e.employeeId}</p></div><div class="profile-field-box"><p class="profile-field-label">ตำแหน่ง</p><p class="profile-field-value">${e.position}</p></div><div class="profile-field-box"><p class="profile-field-label">แผนก</p><p class="profile-field-value">${e.department}</p></div><div class="profile-field-box"><p class="profile-field-label">เบอร์โทรศัพท์</p><p class="profile-field-value">${e.phone}</p></div><div class="profile-field-box"><p class="profile-field-label">อีเมล</p><p class="profile-field-value">${e.email}</p></div><div class="profile-field-box"><p class="profile-field-label">ที่อยู่บริษัท</p><p class="profile-field-value">${e.address}</p></div></div>`;
-  return `<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>ข้อมูลส่วนตัวสถานประกอบการ</h3><p class="small">ข้อมูลบริษัทและผู้ประสานงาน</p></div>${enterprisePageEditMode?`<div class="actions" style="margin:0"><button class="success" onclick="saveEnterpriseProfile()">💾 บันทึก</button><button class="ghost" onclick="enterprisePageEditMode=false;render()">ยกเลิก</button></div>`:`<button class="secondary" onclick="enterprisePageEditMode=true;render()">แก้ไขข้อมูล</button>`}</div>${fields}</div>`;
+  return `<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>ข้อมูลส่วนตัวสถานประกอบการ</h3><p class="small">ข้อมูลบริษัทและผู้ประสานงาน</p></div>${enterprisePageEditMode?`<div class="actions" style="margin:0"><button class="success" onclick="saveEnterpriseProfile()">บันทึก</button><button class="ghost" onclick="enterprisePageEditMode=false;render()">ยกเลิก</button></div>`:`<button class="secondary" onclick="enterprisePageEditMode=true;render()">แก้ไขข้อมูล</button>`}</div>${fields}</div>`;
 }
 function saveEnterpriseProfile(){
   const e=state.enterpriseProfile; ["company","name","id","position","department","phone","email","address"].forEach(k=>{const el=document.getElementById("epf-"+k); if(el)e[k==="id"?"employeeId":k]=el.value||e[k==="id"?"employeeId":k];});
@@ -1020,7 +1020,7 @@ function studentView(){
     return layout("student",`
       ${bannerHtml}
       <div class="match-header">
-        <h3>💼 งานที่แนะนำสำหรับคุณ</h3>
+        <h3>งานที่แนะนำสำหรับคุณ</h3>
         <p>จัดลำดับตามความเข้ากันกับทักษะของคุณ</p>
       </div>
       <div class="grid" style="gap:14px">
@@ -1030,7 +1030,7 @@ function studentView(){
             <div>
               <h3 style="margin:0 0 2px;font-size:15px;color:var(--navy)">${job.title}</h3>
               <p class="small" style="margin:0 0 4px">${job.company} · 📍 ${job.location}</p>
-              <span class="match-score-badge">🎯 Match ${job.score}%</span>
+              <span class="match-score-badge">Match ${job.score}%</span>
               <div class="match-tags-row">
                 ${job.matchedTags.map(t=>`<span class="match-tag-yes">✓ ${t}</span>`).join("")}
                 ${job.unmatchedTags.map(t=>`<span class="match-tag-no">${t}</span>`).join("")}
@@ -1078,7 +1078,7 @@ function studentView(){
   if(sc==="applications"){
     return layout("student",`
       <div class="match-header">
-        <h3>📋 รายการสมัครงานของคุณ</h3>
+        <h3>รายการสมัครงานของคุณ</h3>
         <p>ติดตามสถานะการสมัครงานของคุณได้ที่นี่</p>
       </div>
       ${state.applications.length===0?`<div style="text-align:center;padding:40px;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px">📋</div><p>ยังไม่ได้สมัครงานใด</p></div>`:""}
@@ -1087,7 +1087,7 @@ function studentView(){
           const job=jobsData.find(j=>j.id===app.jobId);
           if(!job)return"";
           const chipClass=statusChipClass(app.status);
-          const statusIcon=app.status==="ผ่านการสมัคร"?"🎉":app.status==="ไม่ผ่านการสมัคร"?"❌":app.status==="อ่านแล้ว"?"📨":"📋";
+          const statusIcon=app.status==="ผ่านการสมัคร"?"":app.status==="ไม่ผ่านการสมัคร"?"❌":app.status==="อ่านแล้ว"?"":"";
           return `
             <div class="post-card" style="cursor:pointer" onclick="openAppliedJobDetail('${app.jobId}')">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
@@ -1108,7 +1108,7 @@ function studentView(){
   if(sc==="jobboard"){
     return layout("student",`
       <div class="match-header">
-        <h3>🔍 ประกาศงานทั้งหมด</h3>
+        <h3>ประกาศงานทั้งหมด</h3>
         <p>รายการประกาศงานทั้งหมดในระบบ DEK INTERN</p>
       </div>
       <div class="grid" style="gap:14px">
@@ -1185,27 +1185,27 @@ function enterpriseView(){
       const isSuc=ep.status==="สำเร็จ";
       return `
         <div class="post-card">
-          ${isSuc?`<span class="success-label">✅ สำเร็จ</span>`:""}
+          ${isSuc?`<span class="success-label">สำเร็จ</span>`:""}
           <div class="post-card-header">
             <div>
               <h3>${ep.title}</h3>
-              <p class="small" style="margin:4px 0 0">📅 โพสเมื่อ: ${ep.postedAt} · 👥 ผู้สมัคร: ${ep.applicants} คน</p>
+              <p class="small" style="margin:4px 0 0"> โพสเมื่อ: ${ep.postedAt} · ผู้สมัคร: ${ep.applicants} คน</p>
             </div>
           </div>
           <div class="tagbar" style="margin-bottom:10px">
-            <span class="badge ${isSuc?"success-badge":""}">${isSuc?"🎓 รับนักศึกษาแล้ว":"🟢 กำลังรับสมัคร"}</span>
+            <span class="badge ${isSuc?"success-badge":""}">${isSuc?"รับนักศึกษาแล้ว":"🟢 กำลังรับสมัคร"}</span>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="secondary" onclick="openJobDetail('${ep.jobId}')">👁️ ดูประกาศ</button>
-            <button class="primary" onclick="openSmartRanking('${ep.id}')">🏆 Smart Ranking</button>
-            <button class="ghost" onclick="openAllApplicants('${ep.id}')">👥 ผู้สมัครทั้งหมด</button>
+            <button class="secondary" onclick="openJobDetail('${ep.jobId}')">ดูประกาศ</button>
+            <button class="primary" onclick="openSmartRanking('${ep.id}')">Smart Ranking</button>
+            <button class="ghost" onclick="openAllApplicants('${ep.id}')">ผู้สมัครทั้งหมด</button>
           </div>
         </div>`;
     }).join("");
     return layout("enterprise",`
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
         <div>
-          <h3 style="margin:0 0 3px;color:var(--navy)">📋 ประกาศงานของคุณ</h3>
+          <h3 style="margin:0 0 3px;color:var(--navy)">ประกาศงานของคุณ</h3>
           <p class="small" style="margin:0">รายการประกาศงานทั้งหมดที่คุณโพสไว้</p>
         </div>
         <button class="primary" onclick="showPostJobFormFn()">+ โพสประกาศงาน</button>
@@ -1217,14 +1217,14 @@ function enterpriseView(){
   if(sc==="ranking"){
     return layout("enterprise",`
       <div class="match-header">
-        <h3>🏆 Smart Ranking</h3>
+        <h3>Smart Ranking</h3>
         <p>เลือกประกาศงานเพื่อดูนักศึกษาที่แนะนำ</p>
       </div>
       <div class="grid" style="gap:10px">
         ${enterprisePostsData.map(ep=>`
           <div style="border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;justify-content:space-between;align-items:center;background:white">
-            <div><strong style="color:var(--navy)">${ep.title}</strong><p class="small" style="margin:4px 0 0">👥 ${ep.applicants} ผู้สมัคร</p></div>
-            <button class="primary" onclick="openSmartRanking('${ep.id}')">🏆 ดู Smart Ranking</button>
+            <div><strong style="color:var(--navy)">${ep.title}</strong><p class="small" style="margin:4px 0 0">${ep.applicants} ผู้สมัคร</p></div>
+            <button class="primary" onclick="openSmartRanking('${ep.id}')">ดู Smart Ranking</button>
           </div>`).join("")}
       </div>`);
   }
@@ -1264,7 +1264,7 @@ function renderPostJobForm(){
   setTimeout(()=>renderSkillCheckboxes(),0);
   return `<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <h3 style="margin:0">📝 โพสประกาศงาน</h3>
+      <h3 style="margin:0">โพสประกาศงาน</h3>
       <button class="ghost" onclick="hidePostJobFormFn()">← กลับรายการ</button>
     </div>
     <div class="grid two">
@@ -1284,7 +1284,7 @@ function renderPostJobForm(){
     <label>คุณสมบัติผู้สมัคร</label><textarea>ปริญญาตรี CS หรือที่เกี่ยวข้อง&#10;มีความรู้ React/Vue.js&#10;สามารถทำงานเป็นทีมได้ดี</textarea>
     <label>สวัสดิการ</label><input value="ประกันสุขภาพ, โบนัส, WFH Allowance">
     <div class="actions">
-      <button class="primary" onclick="notify('📝 บันทึกประกาศงานแล้ว');hidePostJobFormFn()">บันทึกประกาศงาน</button>
+      <button class="primary" onclick="notify('บันทึกประกาศงานแล้ว');hidePostJobFormFn()">บันทึกประกาศงาน</button>
       <button class="ghost" onclick="hidePostJobFormFn()">ยกเลิก</button>
     </div>
   </div>`;
@@ -1294,12 +1294,12 @@ function renderPostJobForm(){
 function openAllApplicants(postId){
   const post=enterprisePostsData.find(p=>p.id===postId);
   if(!post)return;
-  const html=`<h2 style="margin:0 0 4px;color:var(--navy)">👥 ผู้สมัครทั้งหมด</h2>
+  const html=`<h2 style="margin:0 0 4px;color:var(--navy)">ผู้สมัครทั้งหมด</h2>
     <p class="modal-sub" style="margin-bottom:18px">ตำแหน่ง: <strong>${post.title}</strong> — แสดงรายชื่อผู้สมัครโดยไม่มีการจัดอันดับ</p>
     ${smartStudents.map(s=>`<div class="sr-student-card">
       <div class="sr-avatar">${s.initial}</div>
-      <div class="sr-info"><strong>${s.name}</strong><span>🏫 ${s.university} · ${s.major} · GPA ${s.gpa}</span><div class="tagbar" style="margin-top:6px">${s.skills.map(sk=>`<span class="tag">${sk}</span>`).join("")}</div></div>
-      <div class="sr-actions"><button class="secondary" onclick="openResumeModal('${s.id}')">📄 ดูประวัติส่วนตัว</button><button class="success" onclick="acceptStudent('${s.id}','${s.name}')">✅ รับเข้าฝึกงาน</button></div>
+      <div class="sr-info"><strong>${s.name}</strong><span> ${s.university} · ${s.major} · GPA ${s.gpa}</span><div class="tagbar" style="margin-top:6px">${s.skills.map(sk=>`<span class="tag">${sk}</span>`).join("")}</div></div>
+      <div class="sr-actions"><button class="secondary" onclick="openResumeModal('${s.id}')">ดูประวัติส่วนตัว</button><button class="success" onclick="acceptStudent('${s.id}','${s.name}')">✅ รับเข้าฝึกงาน</button></div>
     </div>`).join("")}
     <p class="small" style="margin:14px 0 0">ตัวอย่างรายชื่อผู้สมัคร ${smartStudents.length} คน จากทั้งหมด ${post.applicants} คน</p>`;
   document.getElementById("allApplicantsContent").innerHTML=html;
@@ -1311,7 +1311,7 @@ function openSmartRanking(postId){
   state.currentSmartRankPostId=postId;
   const rankClass=i=>i===0?"rank-1":i===1?"rank-2":i===2?"rank-3":"rank-other";
   const html=`
-    <h2 style="margin:0 0 4px;color:var(--navy)">🏆 Smart Ranking</h2>
+    <h2 style="margin:0 0 4px;color:var(--navy)">Smart Ranking</h2>
     <p class="modal-sub" style="margin-bottom:18px">ตำแหน่ง: <strong>${post.title}</strong> — นักศึกษาที่แนะนำโดย AI</p>
     ${smartStudents.map((s,i)=>`
       <div class="sr-student-card">
@@ -1323,11 +1323,11 @@ function openSmartRanking(postId){
           <strong>${s.name}</strong>
           <span>🏫 ${s.university} · ${s.major} · GPA ${s.gpa}</span>
           <div class="tagbar" style="margin-top:6px">${s.skills.map(sk=>`<span class="tag">${sk}</span>`).join("")}</div>
-          <span class="match-score-badge" style="margin-top:6px">🎯 Match ${s.score}%</span>
+          <span class="match-score-badge" style="margin-top:6px">Match ${s.score}%</span>
         </div>
         <div class="sr-actions">
-          <button class="secondary" onclick="openResumeModal('${s.id}')">📄 อ่าน Resume</button>
-          <button class="success" onclick="acceptStudent('${s.id}','${s.name}')">✅ รับเข้าฝึกงาน</button>
+          <button class="secondary" onclick="openResumeModal('${s.id}')">อ่าน Resume</button>
+          <button class="success" onclick="acceptStudent('${s.id}','${s.name}')">รับเข้าฝึกงาน</button>
         </div>
       </div>
     `).join("")}
@@ -1336,7 +1336,7 @@ function openSmartRanking(postId){
   openModal("smartRankingModal");
 }
 function acceptStudent(sId,sName){
-  notify(`🎉 รับ ${sName} เข้าฝึกงานเรียบร้อยแล้ว!`);
+  notify(`รับ ${sName} เข้าฝึกงานเรียบร้อยแล้ว!`);
   closeModal("smartRankingModal");
   closeModal("allApplicantsModal");
 }
@@ -1354,17 +1354,17 @@ function openResumeModal(sId){
       </div>
     </div>
     <div class="job-detail-section">
-      <h4>🎯 ทักษะ</h4>
+      <h4>ทักษะ</h4>
       <div class="skill-badges-wrap">${s.skills.map(sk=>`<span class="skill-badge verified">✓ ${sk}</span>`).join("")}</div>
     </div>
     <div class="job-detail-section">
-      <h4>🎓 การศึกษา</h4>
+      <h4>การศึกษา</h4>
       <p><strong>${s.university}</strong> · สาขา ${s.major}</p>
       <p>เกรดเฉลี่ยสะสม (GPA): <strong>${s.gpa}</strong></p>
     </div>
 
     <div class="job-detail-section">
-      <h4>🏆 รางวัลและกิจกรรม</h4>
+      <h4>รางวัลและกิจกรรม</h4>
       <p>• แข่งขัน Hackathon ระดับประเทศ — ได้รับรางวัลที่ 2</p>
       <p>• อาสาสมัครสอนคอมพิวเตอร์ชุมชน</p>
     </div>
@@ -1391,8 +1391,8 @@ function institutionProfilePage(){
   const editing=state.institutionProfileEditing;
   return `<div class="card" style="max-width:760px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px">
-      <div><h3>👤 ประวัติส่วนตัวอาจารย์</h3><p class="small" style="margin:0">ข้อมูลผู้ดูแลการฝึกงานของสถาบันการศึกษา</p></div>
-      <button class="${editing?"ghost":"primary"}" onclick="state.institutionProfileEditing=!state.institutionProfileEditing;render()">${editing?"ยกเลิก":"✏️ แก้ไขข้อมูล"}</button>
+      <div><h3>ประวัติส่วนตัวอาจารย์</h3><p class="small" style="margin:0">ข้อมูลผู้ดูแลการฝึกงานของสถาบันการศึกษา</p></div>
+      <button class="${editing?"ghost":"primary"}" onclick="state.institutionProfileEditing=!state.institutionProfileEditing;render()">${editing?"ยกเลิก":"แก้ไขข้อมูล"}</button>
     </div>
     ${editing?`<div class="profile-edit-grid">
       <div><label>ชื่อ</label><input value="ดร.กานดา"></div><div><label>นามสกุล</label><input value="สมชาย"></div>
