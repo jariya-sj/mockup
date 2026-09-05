@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DEK INTERN</title>
+    {% load static %}
+  <link rel="stylesheet" href="{% static 'css/mockup.css' %}">
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">DI</div>
+      <div>
+        <h1>DEK INTERN</h1>
+        <span>แพลตฟอร์มหางานฝึกงาน</span>
+      </div>
+    </div>
+    <div class="topbar-actions" id="topbarActions"></div>
+  </header>
+  <section class="viewport-wrap">
+    <div class="viewport" id="app"></div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+{% include 'core/login.html' %}
+{% include 'core/register.html' %}
+{% include 'core/job_detail_modal.html' %}
+{% include 'core/apply.html' %}
+{% include 'core/student_profile.html' %}
+{% include 'core/enterprise_profile.html' %}
+{% include 'core/applicants.html' %}
+{% include 'core/notifications.html' %}
+{% include 'core/ranking.html' %}
+{% include 'core/resume.html' %}
+{% include 'core/institution_detail.html' %}
+{% include 'core/admin.html' %}
+{% include 'core/skill_picker.html' %}
+  <script src="{% static 'js/data.js' %}"></script>
+  <script src="{% static 'js/auth.js' %}"></script>
+  <script src="{% static 'js/student.js' %}"></script>
+  <script src="{% static 'js/enterprise.js' %}"></script>
+  <script src="{% static 'js/institution.js' %}"></script>
+  <script src="{% static 'js/admin.js' %}"></script>
+  <script src="{% static 'js/render.js' %}"></script>
+
+</body>
+</html>

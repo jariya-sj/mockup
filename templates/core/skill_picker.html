@@ -1,0 +1,19 @@
+<!-- Skill Picker Modal (post-registration for students) -->
+<div class="modal-overlay hidden" id="skillPickerModal">
+  <div class="modal-box wide">
+    <h2>เลือกทักษะของคุณ</h2>
+    <p class="modal-sub">เลือกทักษะที่คุณมีเพื่อให้ระบบแนะนำงานที่เหมาะกับคุณได้ดียิ่งขึ้น</p>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <div>
+        <p style="margin:0;font-size:13px;font-weight:800;color:#15803d">สมัครสมาชิกสำเร็จ!</p>
+        <p style="margin:0;font-size:12px;color:#16a34a" id="skillPickerCount">ยังไม่ได้เลือกทักษะ</p>
+      </div>
+    </div>
+    <div id="skillPickerBody"></div>
+    <div class="actions" style="margin-top:18px">
+      <button class="primary" style="flex:1" onclick="saveSkillPicker()">บันทึกทักษะและเข้าสู่ระบบ</button>
+
+    </div>
+  </div>
+</div>
+

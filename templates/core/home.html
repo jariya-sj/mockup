@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+{% block title %}DEK INTERN | งานฝึกงาน{% endblock %}
+{% block content %}
+<section class="mx-auto max-w-6xl px-6 py-10">
+  <div class="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p class="mb-2 text-sm font-bold uppercase tracking-widest text-blue-600">DEK INTERN</p><h1 class="text-3xl font-black">หางานฝึกงานที่เหมาะกับคุณ</h1><p class="mt-2 text-slate-500">ค้นหาโอกาส พัฒนาทักษะ และติดตามการสมัครในที่เดียว</p></div><a href="{% url 'core:login' %}" class="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-700">เริ่มต้นใช้งาน</a></div>
+  <div class="grid gap-4">{% for job in jobs %}<article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><div class="flex flex-wrap items-start justify-between gap-4"><div><h2 class="text-lg font-extrabold">{{ job.title }}</h2><p class="mt-1 text-sm text-slate-500">{{ job.company }} · {{ job.location }}</p><div class="mt-3 flex flex-wrap gap-2">{% for tag in job.tags %}<span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">{{ tag }}</span>{% endfor %}</div></div><a href="{% url 'core:job_detail' job.id %}" class="rounded-lg bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-100">ดูรายละเอียด</a></div></article>{% empty %}<p class="rounded-xl bg-white p-6 text-slate-500">ยังไม่มีประกาศงาน</p>{% endfor %}</div>
+</section>
+{% endblock %}
