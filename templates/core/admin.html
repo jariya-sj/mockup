@@ -1,0 +1,24 @@
+<!-- Admin Detail and Rejection Modals -->
+<div class="modal-overlay hidden" id="adminDetailModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeModal('adminDetailModal')">&times;</button>
+    <div id="adminDetailContent"></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="adminRejectModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('adminRejectModal')">&times;</button>
+    <h2>ไม่อนุมัติคำขอ</h2>
+    <p class="modal-sub" id="adminRejectTarget"></p>
+    <label for="adminRejectReason">รายละเอียดสาเหตุที่ไม่ผ่านการอนุมัติ</label>
+    <textarea id="adminRejectReason" placeholder="ระบุเหตุผลเพื่อแจ้งให้ผู้ยื่นคำขอทราบ"></textarea>
+    <div class="actions"><button class="danger" onclick="submitAdminReject()">ยืนยันไม่อนุมัติ</button><button class="ghost" onclick="closeModal('adminRejectModal')">ยกเลิก</button></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="adminReportsModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeModal('adminReportsModal')">&times;</button>
+    <div id="adminReportsContent"></div>
+  </div>
+</div>
+
